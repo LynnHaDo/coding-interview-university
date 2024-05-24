@@ -599,6 +599,7 @@ int empty(node ** head) {
 int value_at(node ** head, int index) {
     if (index < 0 || index >= size(head)) {
         printf("Index invalid");
+        exit(0);
     }
 
     int c = 0;
@@ -625,9 +626,123 @@ void push_front(node ** head, int value) {
     }
 }
 
+// Remove the front item and return its value
+int pop_front(node ** head) {
+    if (*head == NULL) {
+        printf("Empty list");
+        exit(0);
+    }
+    
+    int value = (*head)->value;
+    *head = (*head)->next;
+    return value;
+}
 
-void print(node * head) {
-    node * cur = head;
+// Adds an item at the end
+void push_back(node ** head, int value) {
+    node * n = malloc(sizeof(node));
+
+    if (n != NULL) {
+        n->value = value;
+        n->next = NULL;
+        node * cur = *head;
+
+        if (cur == NULL) {
+            *head = n; 
+        } 
+        else {
+            while (cur->next != NULL) {
+                cur = cur->next;
+            }
+            cur->next = n;
+        }
+    }
+}
+
+// Removes end item and returns its value
+int pop_back(node ** head) {
+    if (*head == NULL) {
+        printf("Empty list");
+        exit(0);
+    }
+
+    node * cur = *head;
+    int value = cur->value;
+
+    if (cur->next != NULL) {
+        while (cur->next->next != NULL) {
+            cur = cur->next;
+        }
+        value = (cur->next)->value;
+        cur->next = NULL;
+    } else {
+        *head = NULL;
+    }
+
+    return value;
+}
+
+// Get the value of the front item
+int front(node ** head) {
+    if (*head == NULL) {
+        printf("Empty list");
+        exit(0);
+    }
+
+    return (*head)->value;
+}
+
+// Get the value of the end item
+int back(node ** head) {
+    if (*head == NULL) {
+        printf("Empty list");
+        exit(0);
+    }
+
+    node * cur = *head;
+
+    while (cur->next != NULL) {
+        cur = cur->next;
+    }
+
+    return cur->value;
+}
+
+// Insert value at index, so the current item at that index is pointed to by the new item at the index
+void insert(node ** head, int index, int value) {
+    if (index < 0 || (index >= size(head) && size(head) > 0) || (index > 0 && size(head) == 0)) {
+        printf("Index invalid\n");
+        return;
+    }
+
+    node * n = malloc(sizeof(node));
+
+    if (n != NULL) {
+        n->value = value;
+
+        int c = 0;
+        node * cur = *head;
+
+        if (cur == NULL || index == 0) {
+            n->next = *head;
+            *head = n;
+            return;
+        }
+
+        while (cur != NULL) {
+            if (c == index - 1) {
+                n->next = cur->next;
+                cur->next = n;
+                break;
+            }
+            c++;
+            cur = cur->next;
+        }
+    }
+}
+
+void print_list(node ** head) {
+    node * cur = *head;
     while (cur != NULL) {
         printf("%i -> ", cur->value);
         cur = cur->next;
@@ -635,12 +750,18 @@ void print(node * head) {
 }
 
 int main() {
-    node ** list = create_linkedlist();
-    push_front(list, 23);
-    printf("%i\n", size(list));
-    push_front(list, 2);
-    printf("%i\n", size(list));
-    //printf("%i\n", value_at(list, 0));
+    node ** head = create_linkedlist();
+    
+    insert(head, 1, 20);
+    insert(head, 0, 12321);
+    push_back(head, 69);
+    push_front(head, 32);
+    insert(head, 2, 20);
+    insert(head, 0, 12);
+    insert(head, 1, 2312);
+
+    
+    print_list(head);
 }
 
 
@@ -650,7 +771,7 @@ int main() {
 
 static void *_cffi_types[] = {
 /*  0 */ _CFFI_OP(_CFFI_OP_FUNCTION, 5), // int()(node * *)
-/*  1 */ _CFFI_OP(_CFFI_OP_POINTER, 13), // node * *
+/*  1 */ _CFFI_OP(_CFFI_OP_POINTER, 18), // node * *
 /*  2 */ _CFFI_OP(_CFFI_OP_FUNCTION_END, 0),
 /*  3 */ _CFFI_OP(_CFFI_OP_FUNCTION, 5), // int()(node * *, int)
 /*  4 */ _CFFI_OP(_CFFI_OP_NOOP, 1),
@@ -658,14 +779,57 @@ static void *_cffi_types[] = {
 /*  6 */ _CFFI_OP(_CFFI_OP_FUNCTION_END, 0),
 /*  7 */ _CFFI_OP(_CFFI_OP_FUNCTION, 1), // node * *()(void)
 /*  8 */ _CFFI_OP(_CFFI_OP_FUNCTION_END, 0),
-/*  9 */ _CFFI_OP(_CFFI_OP_FUNCTION, 15), // void()(node * *, int)
+/*  9 */ _CFFI_OP(_CFFI_OP_FUNCTION, 20), // void()(node * *, int)
 /* 10 */ _CFFI_OP(_CFFI_OP_NOOP, 1),
 /* 11 */ _CFFI_OP(_CFFI_OP_PRIMITIVE, 7),
 /* 12 */ _CFFI_OP(_CFFI_OP_FUNCTION_END, 0),
-/* 13 */ _CFFI_OP(_CFFI_OP_POINTER, 14), // node *
-/* 14 */ _CFFI_OP(_CFFI_OP_STRUCT_UNION, 0), // node
-/* 15 */ _CFFI_OP(_CFFI_OP_PRIMITIVE, 0), // void
+/* 13 */ _CFFI_OP(_CFFI_OP_FUNCTION, 20), // void()(node * *, int, int)
+/* 14 */ _CFFI_OP(_CFFI_OP_NOOP, 1),
+/* 15 */ _CFFI_OP(_CFFI_OP_PRIMITIVE, 7),
+/* 16 */ _CFFI_OP(_CFFI_OP_PRIMITIVE, 7),
+/* 17 */ _CFFI_OP(_CFFI_OP_FUNCTION_END, 0),
+/* 18 */ _CFFI_OP(_CFFI_OP_POINTER, 19), // node *
+/* 19 */ _CFFI_OP(_CFFI_OP_STRUCT_UNION, 0), // node
+/* 20 */ _CFFI_OP(_CFFI_OP_PRIMITIVE, 0), // void
 };
+
+static int _cffi_d_back(node * * x0)
+{
+  return back(x0);
+}
+#ifndef PYPY_VERSION
+static PyObject *
+_cffi_f_back(PyObject *self, PyObject *arg0)
+{
+  node * * x0;
+  Py_ssize_t datasize;
+  struct _cffi_freeme_s *large_args_free = NULL;
+  int result;
+  PyObject *pyresult;
+
+  datasize = _cffi_prepare_pointer_call_argument(
+      _cffi_type(1), arg0, (char **)&x0);
+  if (datasize != 0) {
+    x0 = ((size_t)datasize) <= 640 ? (node * *)alloca((size_t)datasize) : NULL;
+    if (_cffi_convert_array_argument(_cffi_type(1), arg0, (char **)&x0,
+            datasize, &large_args_free) < 0)
+      return NULL;
+  }
+
+  Py_BEGIN_ALLOW_THREADS
+  _cffi_restore_errno();
+  { result = back(x0); }
+  _cffi_save_errno();
+  Py_END_ALLOW_THREADS
+
+  (void)self; /* unused */
+  pyresult = _cffi_from_c_int(result, int);
+  if (large_args_free != NULL) _cffi_free_array_arguments(large_args_free);
+  return pyresult;
+}
+#else
+#  define _cffi_f_back _cffi_d_back
+#endif
 
 static node * * _cffi_d_create_linkedlist(void)
 {
@@ -729,6 +893,218 @@ _cffi_f_empty(PyObject *self, PyObject *arg0)
 }
 #else
 #  define _cffi_f_empty _cffi_d_empty
+#endif
+
+static int _cffi_d_front(node * * x0)
+{
+  return front(x0);
+}
+#ifndef PYPY_VERSION
+static PyObject *
+_cffi_f_front(PyObject *self, PyObject *arg0)
+{
+  node * * x0;
+  Py_ssize_t datasize;
+  struct _cffi_freeme_s *large_args_free = NULL;
+  int result;
+  PyObject *pyresult;
+
+  datasize = _cffi_prepare_pointer_call_argument(
+      _cffi_type(1), arg0, (char **)&x0);
+  if (datasize != 0) {
+    x0 = ((size_t)datasize) <= 640 ? (node * *)alloca((size_t)datasize) : NULL;
+    if (_cffi_convert_array_argument(_cffi_type(1), arg0, (char **)&x0,
+            datasize, &large_args_free) < 0)
+      return NULL;
+  }
+
+  Py_BEGIN_ALLOW_THREADS
+  _cffi_restore_errno();
+  { result = front(x0); }
+  _cffi_save_errno();
+  Py_END_ALLOW_THREADS
+
+  (void)self; /* unused */
+  pyresult = _cffi_from_c_int(result, int);
+  if (large_args_free != NULL) _cffi_free_array_arguments(large_args_free);
+  return pyresult;
+}
+#else
+#  define _cffi_f_front _cffi_d_front
+#endif
+
+static void _cffi_d_insert(node * * x0, int x1, int x2)
+{
+  insert(x0, x1, x2);
+}
+#ifndef PYPY_VERSION
+static PyObject *
+_cffi_f_insert(PyObject *self, PyObject *args)
+{
+  node * * x0;
+  int x1;
+  int x2;
+  Py_ssize_t datasize;
+  struct _cffi_freeme_s *large_args_free = NULL;
+  PyObject *arg0;
+  PyObject *arg1;
+  PyObject *arg2;
+
+  if (!PyArg_UnpackTuple(args, "insert", 3, 3, &arg0, &arg1, &arg2))
+    return NULL;
+
+  datasize = _cffi_prepare_pointer_call_argument(
+      _cffi_type(1), arg0, (char **)&x0);
+  if (datasize != 0) {
+    x0 = ((size_t)datasize) <= 640 ? (node * *)alloca((size_t)datasize) : NULL;
+    if (_cffi_convert_array_argument(_cffi_type(1), arg0, (char **)&x0,
+            datasize, &large_args_free) < 0)
+      return NULL;
+  }
+
+  x1 = _cffi_to_c_int(arg1, int);
+  if (x1 == (int)-1 && PyErr_Occurred())
+    return NULL;
+
+  x2 = _cffi_to_c_int(arg2, int);
+  if (x2 == (int)-1 && PyErr_Occurred())
+    return NULL;
+
+  Py_BEGIN_ALLOW_THREADS
+  _cffi_restore_errno();
+  { insert(x0, x1, x2); }
+  _cffi_save_errno();
+  Py_END_ALLOW_THREADS
+
+  (void)self; /* unused */
+  if (large_args_free != NULL) _cffi_free_array_arguments(large_args_free);
+  Py_INCREF(Py_None);
+  return Py_None;
+}
+#else
+#  define _cffi_f_insert _cffi_d_insert
+#endif
+
+static int _cffi_d_pop_back(node * * x0)
+{
+  return pop_back(x0);
+}
+#ifndef PYPY_VERSION
+static PyObject *
+_cffi_f_pop_back(PyObject *self, PyObject *arg0)
+{
+  node * * x0;
+  Py_ssize_t datasize;
+  struct _cffi_freeme_s *large_args_free = NULL;
+  int result;
+  PyObject *pyresult;
+
+  datasize = _cffi_prepare_pointer_call_argument(
+      _cffi_type(1), arg0, (char **)&x0);
+  if (datasize != 0) {
+    x0 = ((size_t)datasize) <= 640 ? (node * *)alloca((size_t)datasize) : NULL;
+    if (_cffi_convert_array_argument(_cffi_type(1), arg0, (char **)&x0,
+            datasize, &large_args_free) < 0)
+      return NULL;
+  }
+
+  Py_BEGIN_ALLOW_THREADS
+  _cffi_restore_errno();
+  { result = pop_back(x0); }
+  _cffi_save_errno();
+  Py_END_ALLOW_THREADS
+
+  (void)self; /* unused */
+  pyresult = _cffi_from_c_int(result, int);
+  if (large_args_free != NULL) _cffi_free_array_arguments(large_args_free);
+  return pyresult;
+}
+#else
+#  define _cffi_f_pop_back _cffi_d_pop_back
+#endif
+
+static int _cffi_d_pop_front(node * * x0)
+{
+  return pop_front(x0);
+}
+#ifndef PYPY_VERSION
+static PyObject *
+_cffi_f_pop_front(PyObject *self, PyObject *arg0)
+{
+  node * * x0;
+  Py_ssize_t datasize;
+  struct _cffi_freeme_s *large_args_free = NULL;
+  int result;
+  PyObject *pyresult;
+
+  datasize = _cffi_prepare_pointer_call_argument(
+      _cffi_type(1), arg0, (char **)&x0);
+  if (datasize != 0) {
+    x0 = ((size_t)datasize) <= 640 ? (node * *)alloca((size_t)datasize) : NULL;
+    if (_cffi_convert_array_argument(_cffi_type(1), arg0, (char **)&x0,
+            datasize, &large_args_free) < 0)
+      return NULL;
+  }
+
+  Py_BEGIN_ALLOW_THREADS
+  _cffi_restore_errno();
+  { result = pop_front(x0); }
+  _cffi_save_errno();
+  Py_END_ALLOW_THREADS
+
+  (void)self; /* unused */
+  pyresult = _cffi_from_c_int(result, int);
+  if (large_args_free != NULL) _cffi_free_array_arguments(large_args_free);
+  return pyresult;
+}
+#else
+#  define _cffi_f_pop_front _cffi_d_pop_front
+#endif
+
+static void _cffi_d_push_back(node * * x0, int x1)
+{
+  push_back(x0, x1);
+}
+#ifndef PYPY_VERSION
+static PyObject *
+_cffi_f_push_back(PyObject *self, PyObject *args)
+{
+  node * * x0;
+  int x1;
+  Py_ssize_t datasize;
+  struct _cffi_freeme_s *large_args_free = NULL;
+  PyObject *arg0;
+  PyObject *arg1;
+
+  if (!PyArg_UnpackTuple(args, "push_back", 2, 2, &arg0, &arg1))
+    return NULL;
+
+  datasize = _cffi_prepare_pointer_call_argument(
+      _cffi_type(1), arg0, (char **)&x0);
+  if (datasize != 0) {
+    x0 = ((size_t)datasize) <= 640 ? (node * *)alloca((size_t)datasize) : NULL;
+    if (_cffi_convert_array_argument(_cffi_type(1), arg0, (char **)&x0,
+            datasize, &large_args_free) < 0)
+      return NULL;
+  }
+
+  x1 = _cffi_to_c_int(arg1, int);
+  if (x1 == (int)-1 && PyErr_Occurred())
+    return NULL;
+
+  Py_BEGIN_ALLOW_THREADS
+  _cffi_restore_errno();
+  { push_back(x0, x1); }
+  _cffi_save_errno();
+  Py_END_ALLOW_THREADS
+
+  (void)self; /* unused */
+  if (large_args_free != NULL) _cffi_free_array_arguments(large_args_free);
+  Py_INCREF(Py_None);
+  return Py_None;
+}
+#else
+#  define _cffi_f_push_back _cffi_d_push_back
 #endif
 
 static void _cffi_d_push_front(node * * x0, int x1)
@@ -874,8 +1250,14 @@ static void _cffi_checkfld__node(node *p)
 struct _cffi_align__node { char x; node y; };
 
 static const struct _cffi_global_s _cffi_globals[] = {
+  { "back", (void *)_cffi_f_back, _CFFI_OP(_CFFI_OP_CPYTHON_BLTN_O, 0), (void *)_cffi_d_back },
   { "create_linkedlist", (void *)_cffi_f_create_linkedlist, _CFFI_OP(_CFFI_OP_CPYTHON_BLTN_N, 7), (void *)_cffi_d_create_linkedlist },
   { "empty", (void *)_cffi_f_empty, _CFFI_OP(_CFFI_OP_CPYTHON_BLTN_O, 0), (void *)_cffi_d_empty },
+  { "front", (void *)_cffi_f_front, _CFFI_OP(_CFFI_OP_CPYTHON_BLTN_O, 0), (void *)_cffi_d_front },
+  { "insert", (void *)_cffi_f_insert, _CFFI_OP(_CFFI_OP_CPYTHON_BLTN_V, 13), (void *)_cffi_d_insert },
+  { "pop_back", (void *)_cffi_f_pop_back, _CFFI_OP(_CFFI_OP_CPYTHON_BLTN_O, 0), (void *)_cffi_d_pop_back },
+  { "pop_front", (void *)_cffi_f_pop_front, _CFFI_OP(_CFFI_OP_CPYTHON_BLTN_O, 0), (void *)_cffi_d_pop_front },
+  { "push_back", (void *)_cffi_f_push_back, _CFFI_OP(_CFFI_OP_CPYTHON_BLTN_V, 9), (void *)_cffi_d_push_back },
   { "push_front", (void *)_cffi_f_push_front, _CFFI_OP(_CFFI_OP_CPYTHON_BLTN_V, 9), (void *)_cffi_d_push_front },
   { "size", (void *)_cffi_f_size, _CFFI_OP(_CFFI_OP_CPYTHON_BLTN_O, 0), (void *)_cffi_d_size },
   { "value_at", (void *)_cffi_f_value_at, _CFFI_OP(_CFFI_OP_CPYTHON_BLTN_V, 3), (void *)_cffi_d_value_at },
@@ -887,16 +1269,16 @@ static const struct _cffi_field_s _cffi_fields[] = {
              _CFFI_OP(_CFFI_OP_NOOP, 5) },
   { "next", offsetof(node, next),
             sizeof(((node *)0)->next),
-            _CFFI_OP(_CFFI_OP_NOOP, 13) },
+            _CFFI_OP(_CFFI_OP_NOOP, 18) },
 };
 
 static const struct _cffi_struct_union_s _cffi_struct_unions[] = {
-  { "node", 14, _CFFI_F_CHECK_FIELDS,
+  { "node", 19, _CFFI_F_CHECK_FIELDS,
     sizeof(node), offsetof(struct _cffi_align__node, y), 0, 2 },
 };
 
 static const struct _cffi_typename_s _cffi_typenames[] = {
-  { "node", 14 },
+  { "node", 19 },
   { "nodePtr", 1 },
 };
 
@@ -907,12 +1289,12 @@ static const struct _cffi_type_context_s _cffi_type_context = {
   _cffi_struct_unions,
   NULL,  /* no enums */
   _cffi_typenames,
-  5,  /* num_globals */
+  11,  /* num_globals */
   1,  /* num_struct_unions */
   0,  /* num_enums */
   2,  /* num_typenames */
   NULL,  /* no includes */
-  16,  /* num_types */
+  21,  /* num_types */
   0,  /* flags */
 };
 
