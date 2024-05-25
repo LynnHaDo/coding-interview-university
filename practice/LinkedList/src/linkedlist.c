@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include "linkedlist.h"
 
+const optional_int INVALID = {0, 0};
+
 nodePtr create_linkedlist() {
     nodePtr list = malloc(sizeof(nodePtr));
     if (list == NULL) {
@@ -28,14 +30,14 @@ int empty(node ** head) {
 }
 
 // Returns the value of the nth item (starting at 0 for first)
-int value_at(node ** head, int index) {
+optional_int value_at(node ** head, int index) {
     if (index < 0 || index >= size(head)) {
-        printf("Index invalid");
-        exit(0);
+        return INVALID;
     }
 
     int c = 0;
     node * cur = *head;
+    optional_int result = {1, 0};
 
     while (cur != NULL) {
         if (c == index) {
@@ -44,7 +46,10 @@ int value_at(node ** head, int index) {
         c++;
         cur = cur->next;
     }
-    return cur->value;
+
+    result.value = cur->value;
+
+    return result;
 }
 
 // Adds an item to the front of the list
@@ -55,19 +60,19 @@ void push_front(node ** head, int value) {
         n->value = value;
         n->next = *head;
         *head = n;
-    }
+    } 
 }
 
 // Remove the front item and return its value
-int pop_front(node ** head) {
-    if (*head == NULL) {
-        printf("Empty list");
-        exit(0);
+optional_int pop_front(node ** head) {
+    if (empty(head)) {
+        return INVALID;
     }
     
-    int value = (*head)->value;
+    optional_int result = {1, 0};
+    result.value = (*head)->value;
     *head = (*head)->next;
-    return value;
+    return result;
 }
 
 // Adds an item at the end
@@ -92,52 +97,50 @@ void push_back(node ** head, int value) {
 }
 
 // Removes end item and returns its value
-int pop_back(node ** head) {
-    if (*head == NULL) {
-        printf("Empty list");
-        exit(0);
+optional_int pop_back(node ** head) {
+    if (empty(head)) {
+        return INVALID;
     }
 
     node * cur = *head;
-    int value = cur->value;
+    optional_int result = {1, cur->value};
 
     if (cur->next != NULL) {
         while (cur->next->next != NULL) {
             cur = cur->next;
         }
-        value = (cur->next)->value;
+        result.value = (cur->next)->value;
         cur->next = NULL;
     } else {
         *head = NULL;
     }
 
-    return value;
+    return result;
 }
 
 // Get the value of the front item
-int front(node ** head) {
-    if (*head == NULL) {
-        printf("Empty list");
-        exit(0);
+optional_int front(node ** head) {
+    if (empty(head)) {
+        return INVALID;
     }
+    optional_int result = {1, (*head)->value};
 
-    return (*head)->value;
+    return result;
 }
 
 // Get the value of the end item
-int back(node ** head) {
-    if (*head == NULL) {
-        printf("Empty list");
-        exit(0);
+optional_int back(node ** head) {
+    if (empty(head)) {
+        return INVALID;
     }
 
     node * cur = *head;
-
     while (cur->next != NULL) {
         cur = cur->next;
     }
 
-    return cur->value;
+    optional_int result = {1, cur->value};
+    return result;
 }
 
 // Insert value at index, so the current item at that index is pointed to by the new item at the index
@@ -175,35 +178,106 @@ void insert(node ** head, int index, int value) {
 
 // Removes node at given index
 void erase(node ** head, int index) {
-    
-}
+    if (empty(head)) {
+        printf("Empty list\n");
+        return;
+    }
 
-// Returns the value of the node at the nth position from the end of the list
-int value_n_from_end(node ** head, int n) {
+    if (index < 0 || index >= size(head)) {
+        printf("Invalid index\n");
+        return;
+    }
 
-}
+    if (index == 0) {
+        *head = (*head)->next;
+        return;
+    }
 
-void print_list(node ** head) {
     node * cur = *head;
+    int c = 0;
+
     while (cur != NULL) {
-        printf("%i -> ", cur->value);
+        if (c == index - 1) {
+            cur->next = cur->next->next;
+            break;
+        }
+        c++;
         cur = cur->next;
     }
 }
 
-int main() {
-    node ** head = create_linkedlist();
-    
-    insert(head, 1, 20);
-    insert(head, 0, 12321);
-    push_back(head, 69);
-    push_front(head, 32);
-    insert(head, 2, 20);
-    insert(head, 0, 12);
-    insert(head, 1, 2312);
+// Returns the value of the node at the nth position from the end of the list
+optional_int value_n_from_end(node ** head, int n) {
+    if (empty(head)) {
+        return INVALID;
+    }
 
+    int index = size(head) - n;
+
+    if (index < 0 || index >= size(head)) {
+        return INVALID;
+    }
+
+    node * cur = *head;
+    int c = 0;
+
+    while (cur != NULL) {
+        if (c == index) {
+            break;
+        }
+        c++;
+        cur = cur->next;
+    }
+    optional_int result = {1, cur->value};
+    return result;
+}
+
+// Reverses the list
+void reverse(node ** head) {
+    // 0 elements
+    if (empty(head)) {
+        return;
+    }
+    // 1 element
+    if ((*head)->next == NULL) {
+        return;
+    }
+
+    node * cur = *head;
+    node * prev = NULL;
+    node * next = NULL;
+
+    while (cur != NULL) {
+        next = cur->next;
+        cur->next = prev;
+        prev = cur;
+        cur = next;
+    }
+
+    *head = prev;
+}
+
+// removes the first item in the list with this value
+void remove_value(node ** head, int value) {
+    if (empty(head)) {
+        return;
+    }
+
+    if ((*head)->value == value) {
+        *head = (*head)->next;
+        return;
+    }
+
+    node * cur = *head;
     
-    print_list(head);
+    while (cur->next != NULL) {
+        if (cur->next->value == value) {
+            cur->next = cur->next->next;
+            break;
+        }
+
+        cur = cur->next;
+    }
 }
 
 
