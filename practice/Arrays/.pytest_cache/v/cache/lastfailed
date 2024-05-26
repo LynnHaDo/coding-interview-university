@@ -1,6 +1,0 @@
-{
-  "tests/cunit/01_implementation_test.py::test_array": true,
-  "tests/cunit/test_01_implementation.py::test_array": true,
-  "tests/cunit/test_arraylist.py::test_size": true,
-  "tests/cunit/test_arraylist.py::test_create_arraylist": true
-}
