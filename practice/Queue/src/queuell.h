@@ -16,14 +16,14 @@ typedef struct queue {
 }
 queue;
 
-queue create_queue();
+queue * create_queue();
 
 // Adds value at a position at the tail
-void enqueue(node ** head, node ** tail, int value);
+void enqueue(queue * q, int value);
 
 // Returns value and removes least recently added element (front)
-optional_int dequeue(node ** head, node ** tail);
+optional_int dequeue(queue * q);
 
 // Check whether the queue is empty
-int empty(node ** head, node ** tail);
+int empty(queue * q);
 
