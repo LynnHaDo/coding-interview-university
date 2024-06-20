@@ -1,7 +1,6 @@
-package src;
-import java.util.Arrays;
+package src.dp;
 
-class Solution322 {
+public class Solution322 {
     /**
      * Idea 1: Greedy -> Does not work 
      * Counterexample: coins = {1, 3, 4, 5}, amount = 7)
