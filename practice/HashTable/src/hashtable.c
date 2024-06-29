@@ -7,75 +7,99 @@ const optional_int INVALID = {0, 0};
 // Constructor
 hashtable * create_hashtable(int arr_size) 
 {
-    hashtable * h = malloc(sizeof(hashtable));
+    if (arr_size <= 0) {
+        return NULL;
+    }
+
+    hashtable * h = (hashtable *) malloc(sizeof(hashtable));
 
     if (h == NULL) {
         return NULL;
     }
 
-    h->size = arr_size;
-    h->data = malloc(sizeof(item) * arr_size);
+    h->size = 0;
+    h->capacity = arr_size;
+    item * data = (item *) calloc(sizeof(item), arr_size);
+    h->data = &data;
+
+    if (*(h->data) == NULL) {
+        free(h);
+        return NULL;
+    }
 
     return h;
 }
 
 // Return the position of a given key
 // - m is the size of the hash table
-int hash(hashtable * h, int k, int m)
+int hash(hashtable * h, int k)
 {
-    return k % m;
+    return k % h->capacity;
 }
 
 // If the key already exists, update value
 void add(hashtable * h, int key, int value)
 {
+    item * cur = *(h->data) + hash(h, key);
     // Linear probing
-    if (exists(h, key)) {
-        int hashIndex = hash(h, key, h->size);
-        int i = hashIndex;
+        if (exists(h, key)) {
+            
+            int i = hash(h, key);
+            int count = 0;
 
-        if (hashIndex == h->size - 1) {
-            i = 0; // wrap around to find the location for insertion
-        }
+            for (; count <= h->capacity; count++) {
+                if (i == h->capacity - 1) {
+                    cur = *(h->data); // wrap around to find the location for insertion
+                }
 
-        for (; i < h->size; i++) {
-            // Empty spot
-            if ((h->data + i) == NULL) {
-                (h->data + i)->key = key;
-                (h->data + i)->value = value;
-                return;
+                // Empty spot
+                if (cur == NULL) {
+                    cur->key = key;
+                    cur->value = value;
+                    h->size += 1;
+                    return;
+                }
+                cur++;
+                i++;
             }
         }
-    }
-    // No available spot otherwise; update value
-    (h->data + hash(h, key, h->size))->key = key;
-    (h->data + hash(h, key, h->size))->value = value;
+
+
+        // No available spot or spot not taken otherwise; update value
+        cur->key = key;
+        cur->value = value;
+        h->size += 1;
 }
 
 /**
  * Assume table is non-null
  */
 int indexof(hashtable * h, int key) {
-    if (h->data + hash(h, key, h->size) == NULL) {
-        int hashIndex = hash(h, key, h->size);
-        int i = hashIndex;
+    if (h->size == 0) {
+        return -1;
+    }
 
-        if (hashIndex == h->size - 1) {
-            i = 0; // wrap around to find the location for insertion
-        }
+    // O(n) search: Not in the hash position
+    if ( *(h->data) + hash(h, key) == NULL || 
+        (*(h->data) + hash(h, key))->key != key) {
 
-        for (; i < h->size; i++) {
-            if ((h->data + i) == NULL) {
+        for (int i = 0; i < h->capacity; i++) {
+            if ((*(h->data) + i) == NULL) 
+            {
                 continue;
             }
 
-            if ((h->data + i)->key == key) {
+            if ((*(h->data) + i)->key == key) 
+            {
                 return i; 
             }
         }
+
     } 
-    else {
-        return hash(h, key, h->size);
+    
+    // O(1) search
+    if ((*(h->data) + hash(h, key))->key == key) {
+        return hash(h, key);
     }
 
     return -1;
@@ -84,7 +108,7 @@ int indexof(hashtable * h, int key) {
 // Return true if the key already exists
 int exists(hashtable * h, int key)
 {
-    if (h == NULL || h->data == NULL) 
+    if (h == NULL || h->size == 0) 
     {
         return 0;
     }
@@ -96,7 +120,7 @@ int exists(hashtable * h, int key)
 optional_int get_key(hashtable * h, int key)
 {
     if (exists(h, key)) {
-        optional_int item = {1, (h->data + indexof(h, key))->value};
+        optional_int item = {1, (*(h->data) + indexof(h, key))->value};
         return item;
     } 
 
@@ -107,10 +131,9 @@ optional_int get_key(hashtable * h, int key)
 optional_int remove_key(hashtable * h, int key)
 {
     if (exists(h, key)) {
-        optional_int item = {1, (h->data + indexof(h, key))->value};
-        free(h->data + indexof(h, key));
-
-        //h->data + indexof(h, key) = NULL;
+        optional_int item = {1, (*(h->data) + indexof(h, key))->value};
+        *(h->data + indexof(h, key)) = NULL;
+        h->size--;
         return item;
     } 
 
@@ -120,20 +143,21 @@ optional_int remove_key(hashtable * h, int key)
 void print_hashtable(hashtable * h) {
     if (h->size == 0) 
     {
-        printf("[]");
-    } else 
+        printf("[]\n");
+    } 
+    else 
     {
         printf("[");
-        for (int i = 0; i < h->size; i++)
+        for (int i = 0; i < h->capacity; i++)
         {
-            item * item = (h->data + i);
+            item * it = (*(h->data) + i);
 
-            if (item == NULL) {
-                printf("NULL");
+            if (it == NULL) {
+                printf("(,)");
                 continue;
             }
             
-            printf("(%i, %i),", item->key, item->value);
+            printf("(%i, %i),", it->key, it->value);
         }
         printf("]");
         printf("\n");
@@ -143,12 +167,11 @@ void print_hashtable(hashtable * h) {
 
 int main() {
     hashtable * h = create_hashtable(5);
-    print_hashtable(h);
-    printf("%i\n", exists(h, 23)); // 0
-    printf("%i\n", indexof(h, 23)); // 1
-    add(h, 23, 3);
-    printf("%i\n", exists(h, 23)); // 1
+
+    add(h, 1, 2);
+    add(h, 1, 2);
     
+
     print_hashtable(h);
 
     return 0;

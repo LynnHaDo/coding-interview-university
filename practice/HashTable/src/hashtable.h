@@ -12,8 +12,8 @@ typedef struct item {
 item;
 
 typedef struct hashtable {
-    int size; // capacity of the array
-    item * data; // array of items
+    int size, capacity; // size and capacity of the array
+    item ** data; // array of items
 }
 hashtable;
 
@@ -21,8 +21,7 @@ hashtable;
 hashtable * create_hashtable(int arr_size);
 
 // Return the position of a given key
-// - m is the size of the hash table
-int hash(hashtable * h, int k, int m);
+int hash(hashtable * h, int k);
 
 // If the key already exists, update value
 void add(hashtable * h, int key, int value);

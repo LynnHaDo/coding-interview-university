@@ -575,75 +575,99 @@ const optional_int INVALID = {0, 0};
 // Constructor
 hashtable * create_hashtable(int arr_size) 
 {
-    hashtable * h = malloc(sizeof(hashtable));
+    if (arr_size <= 0) {
+        return NULL;
+    }
+
+    hashtable * h = (hashtable *) malloc(sizeof(hashtable));
 
     if (h == NULL) {
         return NULL;
     }
 
-    h->size = arr_size;
-    h->data = malloc(sizeof(item) * arr_size);
+    h->size = 0;
+    h->capacity = arr_size;
+    item * data = (item *) calloc(sizeof(item), arr_size);
+    h->data = &data;
+
+    if (*(h->data) == NULL) {
+        free(h);
+        return NULL;
+    }
 
     return h;
 }
 
 // Return the position of a given key
 // - m is the size of the hash table
-int hash(hashtable * h, int k, int m)
+int hash(hashtable * h, int k)
 {
-    return k % m;
+    return k % h->capacity;
 }
 
 // If the key already exists, update value
 void add(hashtable * h, int key, int value)
 {
+    item * cur = *(h->data) + hash(h, key);
     // Linear probing
-    if (exists(h, key)) {
-        int hashIndex = hash(h, key, h->size);
-        int i = hashIndex;
+        if (exists(h, key)) {
+            
+            int i = hash(h, key);
+            int count = 0;
 
-        if (hashIndex == h->size - 1) {
-            i = 0; // wrap around to find the location for insertion
-        }
+            for (; count <= h->capacity; count++) {
+                if (i == h->capacity - 1) {
+                    cur = *(h->data); // wrap around to find the location for insertion
+                }
 
-        for (; i < h->size; i++) {
-            // Empty spot
-            if ((h->data + i) == NULL) {
-                (h->data + i)->key = key;
-                (h->data + i)->value = value;
-                return;
+                // Empty spot
+                if (cur == NULL) {
+                    cur->key = key;
+                    cur->value = value;
+                    h->size += 1;
+                    return;
+                }
+                cur++;
+                i++;
             }
         }
-    }
-    // No available spot otherwise; update value
-    (h->data + hash(h, key, h->size))->key = key;
-    (h->data + hash(h, key, h->size))->value = value;
+
+
+        // No available spot or spot not taken otherwise; update value
+        cur->key = key;
+        cur->value = value;
+        h->size += 1;
 }
 
 /**
  * Assume table is non-null
  */
 int indexof(hashtable * h, int key) {
-    if (h->data + hash(h, key, h->size) == NULL) {
-        int hashIndex = hash(h, key, h->size);
-        int i = hashIndex;
+    if (h->size == 0) {
+        return -1;
+    }
 
-        if (hashIndex == h->size - 1) {
-            i = 0; // wrap around to find the location for insertion
-        }
+    // O(n) search: Not in the hash position
+    if ( *(h->data) + hash(h, key) == NULL || 
+        (*(h->data) + hash(h, key))->key != key) {
 
-        for (; i < h->size; i++) {
-            if ((h->data + i) == NULL) {
+        for (int i = 0; i < h->capacity; i++) {
+            if ((*(h->data) + i) == NULL) 
+            {
                 continue;
             }
 
-            if ((h->data + i)->key == key) {
+            if ((*(h->data) + i)->key == key) 
+            {
                 return i; 
             }
         }
+
     } 
-    else {
-        return hash(h, key, h->size);
+    
+    // O(1) search
+    if ((*(h->data) + hash(h, key))->key == key) {
+        return hash(h, key);
     }
 
     return -1;
@@ -652,7 +676,7 @@ int indexof(hashtable * h, int key) {
 // Return true if the key already exists
 int exists(hashtable * h, int key)
 {
-    if (h == NULL || h->data == NULL) 
+    if (h == NULL || h->size == 0) 
     {
         return 0;
     }
@@ -664,7 +688,7 @@ int exists(hashtable * h, int key)
 optional_int get_key(hashtable * h, int key)
 {
     if (exists(h, key)) {
-        optional_int item = {1, (h->data + indexof(h, key))->value};
+        optional_int item = {1, (*(h->data) + indexof(h, key))->value};
         return item;
     } 
 
@@ -675,10 +699,9 @@ optional_int get_key(hashtable * h, int key)
 optional_int remove_key(hashtable * h, int key)
 {
     if (exists(h, key)) {
-        optional_int item = {1, (h->data + indexof(h, key))->value};
-        free(h->data + indexof(h, key));
-
-        //h->data + indexof(h, key) = NULL;
+        optional_int item = {1, (*(h->data) + indexof(h, key))->value};
+        *(h->data + indexof(h, key)) = NULL;
+        h->size--;
         return item;
     } 
 
@@ -688,20 +711,21 @@ optional_int remove_key(hashtable * h, int key)
 void print_hashtable(hashtable * h) {
     if (h->size == 0) 
     {
-        printf("[]");
-    } else 
+        printf("[]\n");
+    } 
+    else 
     {
         printf("[");
-        for (int i = 0; i < h->size; i++)
+        for (int i = 0; i < h->capacity; i++)
         {
-            item * item = (h->data + i);
+            item * it = (*(h->data) + i);
 
-            if (item == NULL) {
-                printf("NULL");
+            if (it == NULL) {
+                printf("(,)");
                 continue;
             }
             
-            printf("(%i, %i),", item->key, item->value);
+            printf("(%i, %i),", it->key, it->value);
         }
         printf("]");
         printf("\n");
@@ -711,12 +735,11 @@ void print_hashtable(hashtable * h) {
 
 int main() {
     hashtable * h = create_hashtable(5);
-    print_hashtable(h);
-    printf("%i\n", exists(h, 23)); // 0
-    printf("%i\n", indexof(h, 23)); // 1
-    add(h, 23, 3);
-    printf("%i\n", exists(h, 23)); // 1
+
+    add(h, 1, 2);
+    add(h, 1, 2);
     
+
     print_hashtable(h);
 
     return 0;
@@ -730,28 +753,24 @@ static void *_cffi_types[] = {
 /*  1 */ _CFFI_OP(_CFFI_OP_PRIMITIVE, 7), // int
 /*  2 */ _CFFI_OP(_CFFI_OP_FUNCTION_END, 0),
 /*  3 */ _CFFI_OP(_CFFI_OP_FUNCTION, 1), // int()(hashtable *, int)
-/*  4 */ _CFFI_OP(_CFFI_OP_POINTER, 21), // hashtable *
+/*  4 */ _CFFI_OP(_CFFI_OP_POINTER, 16), // hashtable *
 /*  5 */ _CFFI_OP(_CFFI_OP_PRIMITIVE, 7),
 /*  6 */ _CFFI_OP(_CFFI_OP_FUNCTION_END, 0),
-/*  7 */ _CFFI_OP(_CFFI_OP_FUNCTION, 1), // int()(hashtable *, int, int)
+/*  7 */ _CFFI_OP(_CFFI_OP_FUNCTION, 20), // optional_int()(hashtable *, int)
 /*  8 */ _CFFI_OP(_CFFI_OP_NOOP, 4),
 /*  9 */ _CFFI_OP(_CFFI_OP_PRIMITIVE, 7),
-/* 10 */ _CFFI_OP(_CFFI_OP_PRIMITIVE, 7),
-/* 11 */ _CFFI_OP(_CFFI_OP_FUNCTION_END, 0),
-/* 12 */ _CFFI_OP(_CFFI_OP_FUNCTION, 24), // optional_int()(hashtable *, int)
-/* 13 */ _CFFI_OP(_CFFI_OP_NOOP, 4),
+/* 10 */ _CFFI_OP(_CFFI_OP_FUNCTION_END, 0),
+/* 11 */ _CFFI_OP(_CFFI_OP_FUNCTION, 21), // void()(hashtable *, int, int)
+/* 12 */ _CFFI_OP(_CFFI_OP_NOOP, 4),
+/* 13 */ _CFFI_OP(_CFFI_OP_PRIMITIVE, 7),
 /* 14 */ _CFFI_OP(_CFFI_OP_PRIMITIVE, 7),
 /* 15 */ _CFFI_OP(_CFFI_OP_FUNCTION_END, 0),
-/* 16 */ _CFFI_OP(_CFFI_OP_FUNCTION, 25), // void()(hashtable *, int, int)
-/* 17 */ _CFFI_OP(_CFFI_OP_NOOP, 4),
-/* 18 */ _CFFI_OP(_CFFI_OP_PRIMITIVE, 7),
-/* 19 */ _CFFI_OP(_CFFI_OP_PRIMITIVE, 7),
-/* 20 */ _CFFI_OP(_CFFI_OP_FUNCTION_END, 0),
-/* 21 */ _CFFI_OP(_CFFI_OP_STRUCT_UNION, 0), // hashtable
-/* 22 */ _CFFI_OP(_CFFI_OP_POINTER, 23), // item *
-/* 23 */ _CFFI_OP(_CFFI_OP_STRUCT_UNION, 1), // item
-/* 24 */ _CFFI_OP(_CFFI_OP_STRUCT_UNION, 2), // optional_int
-/* 25 */ _CFFI_OP(_CFFI_OP_PRIMITIVE, 0), // void
+/* 16 */ _CFFI_OP(_CFFI_OP_STRUCT_UNION, 0), // hashtable
+/* 17 */ _CFFI_OP(_CFFI_OP_POINTER, 18), // item * *
+/* 18 */ _CFFI_OP(_CFFI_OP_POINTER, 19), // item *
+/* 19 */ _CFFI_OP(_CFFI_OP_STRUCT_UNION, 1), // item
+/* 20 */ _CFFI_OP(_CFFI_OP_STRUCT_UNION, 2), // optional_int
+/* 21 */ _CFFI_OP(_CFFI_OP_PRIMITIVE, 0), // void
 };
 
 static void _cffi_d_add(hashtable * x0, int x1, int x2)
@@ -924,7 +943,7 @@ _cffi_f_get_key(PyObject *self, PyObject *args)
   Py_END_ALLOW_THREADS
 
   (void)self; /* unused */
-  pyresult = _cffi_from_c_struct((char *)&result, _cffi_type(24));
+  pyresult = _cffi_from_c_struct((char *)&result, _cffi_type(20));
   if (large_args_free != NULL) _cffi_free_array_arguments(large_args_free);
   return pyresult;
 }
@@ -935,9 +954,9 @@ static void _cffi_f_get_key(optional_int *result, hashtable * x0, int x1)
 }
 #endif
 
-static int _cffi_d_hash(hashtable * x0, int x1, int x2)
+static int _cffi_d_hash(hashtable * x0, int x1)
 {
-  return hash(x0, x1, x2);
+  return hash(x0, x1);
 }
 #ifndef PYPY_VERSION
 static PyObject *
@@ -945,16 +964,14 @@ _cffi_f_hash(PyObject *self, PyObject *args)
 {
   hashtable * x0;
   int x1;
-  int x2;
   Py_ssize_t datasize;
   struct _cffi_freeme_s *large_args_free = NULL;
   int result;
   PyObject *pyresult;
   PyObject *arg0;
   PyObject *arg1;
-  PyObject *arg2;
 
-  if (!PyArg_UnpackTuple(args, "hash", 3, 3, &arg0, &arg1, &arg2))
+  if (!PyArg_UnpackTuple(args, "hash", 2, 2, &arg0, &arg1))
     return NULL;
 
   datasize = _cffi_prepare_pointer_call_argument(
@@ -970,13 +987,9 @@ _cffi_f_hash(PyObject *self, PyObject *args)
   if (x1 == (int)-1 && PyErr_Occurred())
     return NULL;
 
-  x2 = _cffi_to_c_int(arg2, int);
-  if (x2 == (int)-1 && PyErr_Occurred())
-    return NULL;
-
   Py_BEGIN_ALLOW_THREADS
   _cffi_restore_errno();
-  { result = hash(x0, x1, x2); }
+  { result = hash(x0, x1); }
   _cffi_save_errno();
   Py_END_ALLOW_THREADS
 
@@ -1077,7 +1090,7 @@ _cffi_f_remove_key(PyObject *self, PyObject *args)
   Py_END_ALLOW_THREADS
 
   (void)self; /* unused */
-  pyresult = _cffi_from_c_struct((char *)&result, _cffi_type(24));
+  pyresult = _cffi_from_c_struct((char *)&result, _cffi_type(20));
   if (large_args_free != NULL) _cffi_free_array_arguments(large_args_free);
   return pyresult;
 }
@@ -1094,7 +1107,8 @@ static void _cffi_checkfld__hashtable(hashtable *p)
   /* only to generate compile-time warnings or errors */
   (void)p;
   (void)((p->size) | 0);  /* check that 'hashtable.size' is an integer */
-  { item * *tmp = &p->data; (void)tmp; }
+  (void)((p->capacity) | 0);  /* check that 'hashtable.capacity' is an integer */
+  { item * * *tmp = &p->data; (void)tmp; }
 }
 struct _cffi_align__hashtable { char x; hashtable y; };
 
@@ -1119,22 +1133,25 @@ static void _cffi_checkfld__optional_int(optional_int *p)
 struct _cffi_align__optional_int { char x; optional_int y; };
 
 static const struct _cffi_global_s _cffi_globals[] = {
-  { "add", (void *)_cffi_f_add, _CFFI_OP(_CFFI_OP_CPYTHON_BLTN_V, 16), (void *)_cffi_d_add },
+  { "add", (void *)_cffi_f_add, _CFFI_OP(_CFFI_OP_CPYTHON_BLTN_V, 11), (void *)_cffi_d_add },
   { "create_hashtable", (void *)_cffi_f_create_hashtable, _CFFI_OP(_CFFI_OP_CPYTHON_BLTN_O, 0), (void *)_cffi_d_create_hashtable },
   { "exists", (void *)_cffi_f_exists, _CFFI_OP(_CFFI_OP_CPYTHON_BLTN_V, 3), (void *)_cffi_d_exists },
-  { "get_key", (void *)_cffi_f_get_key, _CFFI_OP(_CFFI_OP_CPYTHON_BLTN_V, 12), (void *)_cffi_d_get_key },
-  { "hash", (void *)_cffi_f_hash, _CFFI_OP(_CFFI_OP_CPYTHON_BLTN_V, 7), (void *)_cffi_d_hash },
+  { "get_key", (void *)_cffi_f_get_key, _CFFI_OP(_CFFI_OP_CPYTHON_BLTN_V, 7), (void *)_cffi_d_get_key },
+  { "hash", (void *)_cffi_f_hash, _CFFI_OP(_CFFI_OP_CPYTHON_BLTN_V, 3), (void *)_cffi_d_hash },
   { "indexof", (void *)_cffi_f_indexof, _CFFI_OP(_CFFI_OP_CPYTHON_BLTN_V, 3), (void *)_cffi_d_indexof },
-  { "remove_key", (void *)_cffi_f_remove_key, _CFFI_OP(_CFFI_OP_CPYTHON_BLTN_V, 12), (void *)_cffi_d_remove_key },
+  { "remove_key", (void *)_cffi_f_remove_key, _CFFI_OP(_CFFI_OP_CPYTHON_BLTN_V, 7), (void *)_cffi_d_remove_key },
 };
 
 static const struct _cffi_field_s _cffi_fields[] = {
   { "size", offsetof(hashtable, size),
             sizeof(((hashtable *)0)->size),
             _CFFI_OP(_CFFI_OP_NOOP, 1) },
+  { "capacity", offsetof(hashtable, capacity),
+                sizeof(((hashtable *)0)->capacity),
+                _CFFI_OP(_CFFI_OP_NOOP, 1) },
   { "data", offsetof(hashtable, data),
             sizeof(((hashtable *)0)->data),
-            _CFFI_OP(_CFFI_OP_NOOP, 22) },
+            _CFFI_OP(_CFFI_OP_NOOP, 17) },
   { "key", offsetof(item, key),
            sizeof(((item *)0)->key),
            _CFFI_OP(_CFFI_OP_NOOP, 1) },
@@ -1150,18 +1167,18 @@ static const struct _cffi_field_s _cffi_fields[] = {
 };
 
 static const struct _cffi_struct_union_s _cffi_struct_unions[] = {
-  { "hashtable", 21, _CFFI_F_CHECK_FIELDS,
-    sizeof(hashtable), offsetof(struct _cffi_align__hashtable, y), 0, 2 },
-  { "item", 23, _CFFI_F_CHECK_FIELDS,
-    sizeof(item), offsetof(struct _cffi_align__item, y), 2, 2 },
-  { "optional_int", 24, _CFFI_F_CHECK_FIELDS,
-    sizeof(optional_int), offsetof(struct _cffi_align__optional_int, y), 4, 2 },
+  { "hashtable", 16, _CFFI_F_CHECK_FIELDS,
+    sizeof(hashtable), offsetof(struct _cffi_align__hashtable, y), 0, 3 },
+  { "item", 19, _CFFI_F_CHECK_FIELDS,
+    sizeof(item), offsetof(struct _cffi_align__item, y), 3, 2 },
+  { "optional_int", 20, _CFFI_F_CHECK_FIELDS,
+    sizeof(optional_int), offsetof(struct _cffi_align__optional_int, y), 5, 2 },
 };
 
 static const struct _cffi_typename_s _cffi_typenames[] = {
-  { "hashtable", 21 },
-  { "item", 23 },
-  { "optional_int", 24 },
+  { "hashtable", 16 },
+  { "item", 19 },
+  { "optional_int", 20 },
 };
 
 static const struct _cffi_type_context_s _cffi_type_context = {
@@ -1176,7 +1193,7 @@ static const struct _cffi_type_context_s _cffi_type_context = {
   0,  /* num_enums */
   3,  /* num_typenames */
   NULL,  /* no includes */
-  26,  /* num_types */
+  22,  /* num_types */
   0,  /* flags */
 };
 
