@@ -1,0 +1,24 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    //     https://code.visualstudio.com/docs/editor/tasks#vscode
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "compile and run C",
+            "type": "shell",
+            "command": "gcc ${file} -o ${fileBasenameNoExtension} -g -Wall ; ./${fileBasenameNoExtension}",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "options": {
+                "cwd": "/Users/linhdo/Documents/Coding/coding-interview-university/practice/HashTable/src/"
+            }
+        }
+    ]
+}
