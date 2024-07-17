@@ -15,6 +15,10 @@ bst * create_bst() {
     return t;
 }
 
+bst_node * get_root(bst * t) {
+    return t->root;
+}
+
 // insert value into tree](https://leetcode.com/problems/insert-into-a-binary-search-tree/submissions/987660183/)
 void insert(bst * t, int value) {
     bst_node * new_node = (bst_node *)malloc(sizeof(struct bst_node));
@@ -68,8 +72,16 @@ void print_values(bst_node * node) {
 }
 
 // delete the tree
-void delete_tree(bst * t) {
-    t->root = NULL;
+void delete_tree(bst_node * node) {
+    if (node == NULL) {
+        return;
+    }
+
+    delete_tree(node->left);
+    delete_tree(node->right);
+
+    free(node); 
+    node = NULL;
 }
 
 // returns true if a given value exists in the tree
@@ -96,7 +108,9 @@ int is_in_tree(bst * t, int value) {
 }
 
 // returns the height in nodes (single node's height is 1)](https://www.geeksforgeeks.org/find-the-maximum-depth-or-height-of-a-tree/)
-int get_height(bst * t);
+int get_height(bst * t) {
+    return 0;
+}
 
 // returns the minimum value stored in the tree
 optional_int get_min(bst * t) {
@@ -109,16 +123,24 @@ optional_int get_min(bst * t) {
 }
 
 // returns the maximum value stored in the tree
-optional_int get_max(bst * t);   
+optional_int get_max(bst * t) {
+    return INVALID;
+}
 
 // Validate BST https://leetcode.com/problems/validate-binary-search-tree/
-int is_binary_search_tree(bst * t);
+int is_binary_search_tree(bst * t) {
+    return 0;
+}
 
 // Delete a value from the BST (if any)
-int delete_value(bst * t, int value);
+int delete_value(bst * t, int value) {
+    return -1;
+}
 
 // Returns the next-highest value in the tree after given value, -1 if none
-int get_successor(bst * t, int value); 
+int get_successor(bst * t, int value) {
+    return -1;
+}
 
 int main() {
     bst * bst = create_bst();
@@ -132,6 +154,12 @@ int main() {
     insert(bst, 100);
     insert(bst, 13);
     print_values(bst->root);
+    printf("\n");
+    printf("%i\n", size(bst->root));
+
+    delete_tree(bst->root);
+    print_values(bst->root);
+    printf("Size: %i\n", size(bst->root));
 
     return 0;
 }

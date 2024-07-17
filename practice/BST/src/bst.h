@@ -18,6 +18,8 @@ bst;
 
 bst * create_bst();
 
+bst_node * get_root(bst * t);
+
 // insert value into tree](https://leetcode.com/problems/insert-into-a-binary-search-tree/submissions/987660183/)
 void insert(bst * t, int value);    
 
@@ -28,7 +30,7 @@ int size(bst_node * node);
 void print_values(bst_node * t);
 
 // delete the tree
-void delete_tree(bst * t);
+void delete_tree(bst_node * t);
 
 // returns true if a given value exists in the tree
 int is_in_tree(bst * t, int value);
