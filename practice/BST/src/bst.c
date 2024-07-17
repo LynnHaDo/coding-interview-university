@@ -68,10 +68,32 @@ void print_values(bst_node * node) {
 }
 
 // delete the tree
-void delete_tree(bst * t);
+void delete_tree(bst * t) {
+    t->root = NULL;
+}
 
 // returns true if a given value exists in the tree
-int is_in_tree(bst * t);
+int is_in_tree(bst * t, int value) {
+    if (t->root == NULL) {
+        return 0;
+    }
+
+    bst_node * cur = t->root;
+
+    while (cur != NULL) {
+        // If the value to find is on the left
+        if (value < cur->value) {
+            cur = cur->left;
+        }
+        else if (value == cur->value) {
+            return 1;
+        } else {
+            cur = cur->right;
+        }
+    }
+
+    return 0;
+}
 
 // returns the height in nodes (single node's height is 1)](https://www.geeksforgeeks.org/find-the-maximum-depth-or-height-of-a-tree/)
 int get_height(bst * t);
@@ -83,8 +105,7 @@ optional_int get_min(bst * t) {
     }
 
     optional_int min = {1, 0};
-
-    while ()
+    return min;
 }
 
 // returns the maximum value stored in the tree

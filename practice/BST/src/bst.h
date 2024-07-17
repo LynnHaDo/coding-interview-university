@@ -31,7 +31,7 @@ void print_values(bst_node * t);
 void delete_tree(bst * t);
 
 // returns true if a given value exists in the tree
-int is_in_tree(bst * t);
+int is_in_tree(bst * t, int value);
 
 // returns the height in nodes (single node's height is 1)](https://www.geeksforgeeks.org/find-the-maximum-depth-or-height-of-a-tree/)
 int get_height(bst * t);
