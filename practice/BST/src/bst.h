@@ -24,13 +24,13 @@ bst_node * get_root(bst * t);
 void insert(bst * t, int value);    
 
 // get count of values stored
-int size(bst_node * node);
+int size(bst * t);
 
 // prints the values in the tree, from min to max
 void print_values(bst_node * t);
 
 // delete the tree
-void delete_tree(bst_node * t);
+void delete_tree(bst * t);
 
 // returns true if a given value exists in the tree
 int is_in_tree(bst * t, int value);

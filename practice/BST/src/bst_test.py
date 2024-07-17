@@ -36,14 +36,13 @@ class BSTTest(unittest.TestCase):
     
     def test_create_bst(self):
         t = self.module_lib.create_bst()
-        root = self.module_lib.get_root(t)
         self.assertTrue(t)
-        self.assertEqual(self.module_lib.size(root), 0)
+        self.assertEqual(self.module_lib.size(t), 0)
     
     def test_insert_one(self):
         t = self.module_lib.create_bst()
         self.module_lib.insert(t, 10)
-        self.assertEqual(self.module_lib.size(self.module_lib.get_root(t)), 1)
+        self.assertEqual(self.module_lib.size(t), 1)
         self.assertEqual(self.module_lib.get_root(t).value, 10) # check that it is the root
     
     def test_insert_multiple(self):
@@ -54,7 +53,7 @@ class BSTTest(unittest.TestCase):
         for item in items:
             self.module_lib.insert(t, item)
         
-        self.assertEqual(self.module_lib.size(self.module_lib.get_root(t)), len(items))
+        self.assertEqual(self.module_lib.size(t), len(items))
         self.assertEqual(self.module_lib.get_root(t).value, 10)
         self.assertEqual(self.module_lib.get_root(t).left.value, 4)
         self.assertEqual(self.module_lib.get_root(t).right.value, 12)
@@ -77,8 +76,61 @@ class BSTTest(unittest.TestCase):
         self.assertEqual(self.module_lib.is_in_tree(t, 300), 0)
     
     def test_delete_tree(self):
+        t = self.module_lib.create_bst()
+
+        items = [10, 12, 4, 100, 13]
+
+        for item in items:
+            self.module_lib.insert(t, item)
         
+        self.module_lib.delete_tree(t)
+        self.assertEqual(self.module_lib.size(t), 0)
+        self.assertFalse(self.module_lib.get_root(t))
+    
+    def test_get_height_empty(self):
+        t = self.module_lib.create_bst()
+
+        self.assertEqual(self.module_lib.get_height(t), 1)
+    
+    def test_get_height(self):
+        t = self.module_lib.create_bst()
+        items = [10, 12, 4, 100, 13]
+
+        for item in items:
+            self.module_lib.insert(t, item)
         
+        self.assertEqual(self.module_lib.get_height(t), 3)
+
+    def test_get_min_empty(self):
+        t = self.module_lib.create_bst()
+
+        self.assertEqual(self.module_lib.get_min(t).valid, 0)
+    
+    def test_get_min(self):
+        t = self.module_lib.create_bst()
+        items = [10, 12, 4, 100, 13, -2]
+
+        for item in items:
+            self.module_lib.insert(t, item)
+        
+        self.assertEqual(self.module_lib.get_min(t).value, -2)
+    
+    def test_get_max_empty(self):
+        t = self.module_lib.create_bst()
+
+        self.assertEqual(self.module_lib.get_max(t).valid, 0)
+    
+    def test_get_min(self):
+        t = self.module_lib.create_bst()
+        items = [10, 1000, 12, 4, 100, 13, -2]
+
+        for item in items:
+            self.module_lib.insert(t, item)
+        
+        self.assertEqual(self.module_lib.get_max(t).value, 1000)
+    
+
+
         
 
 if __name__ == '__main__':

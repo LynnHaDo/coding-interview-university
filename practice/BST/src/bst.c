@@ -50,13 +50,17 @@ void insert(bst * t, int value) {
     }
 }
 
-// get count of values stored
-int size(bst_node * node) {
+int recursively_count_size(bst_node * node) {
     if (node == NULL) {
         return 0;
     }
 
-    return 1 + size(node->right) + size(node->left);
+    return 1 + recursively_count_size(node->right) + recursively_count_size(node->left);
+}
+
+// get count of values stored
+int size(bst * t) {
+    return recursively_count_size(t->root);
 }
 
 // prints the values in the tree, from min to max
@@ -71,17 +75,26 @@ void print_values(bst_node * node) {
     print_values(node->right);
 }
 
-// delete the tree
-void delete_tree(bst_node * node) {
+void recursively_delete_tree(bst_node * node) {
     if (node == NULL) {
         return;
     }
 
-    delete_tree(node->left);
-    delete_tree(node->right);
+    recursively_delete_tree(node->left);
+    recursively_delete_tree(node->right);
 
-    free(node); 
+    free(node);
     node = NULL;
+}
+
+// delete the tree
+void delete_tree(bst * t) {
+    if (t->root == NULL) {
+        return;
+    }
+
+    recursively_delete_tree(t->root);
+    t->root = NULL;
 }
 
 // returns true if a given value exists in the tree
@@ -107,9 +120,29 @@ int is_in_tree(bst * t, int value) {
     return 0;
 }
 
-// returns the height in nodes (single node's height is 1)](https://www.geeksforgeeks.org/find-the-maximum-depth-or-height-of-a-tree/)
+int recursively_count_depth(bst_node * node) {
+    if (node == NULL) {
+        return -1;
+    }
+
+    int left_height = recursively_count_depth(node->left);
+    int right_height = recursively_count_depth(node->right);
+    
+    if (left_height > right_height) {
+        return 1 + left_height;
+    } else {
+        return 1 + right_height;
+    }
+}
+
+// returns the height in nodes (single node's height is 1)]
+// (https://www.geeksforgeeks.org/find-the-maximum-depth-or-height-of-a-tree/)
 int get_height(bst * t) {
-    return 0;
+    if (t->root == NULL) {
+        return 1;
+    }
+
+    return recursively_count_depth(t->root);
 }
 
 // returns the minimum value stored in the tree
@@ -119,12 +152,31 @@ optional_int get_min(bst * t) {
     }
 
     optional_int min = {1, 0};
+    bst_node * cur = t->root;
+
+    while (cur->left != NULL) {
+        cur = cur->left;
+    }
+
+    min.value = cur->value;
     return min;
 }
 
 // returns the maximum value stored in the tree
 optional_int get_max(bst * t) {
-    return INVALID;
+    if (t->root == NULL) {
+        return INVALID;
+    }
+
+    optional_int max = {1, 0};
+    bst_node * cur = t->root;
+
+    while (cur->right != NULL) {
+        cur = cur->right;
+    }
+
+    max.value = cur->value;
+    return max;
 }
 
 // Validate BST https://leetcode.com/problems/validate-binary-search-tree/
@@ -155,11 +207,12 @@ int main() {
     insert(bst, 13);
     print_values(bst->root);
     printf("\n");
-    printf("%i\n", size(bst->root));
+    printf("%i\n", size(bst));
 
-    delete_tree(bst->root);
-    print_values(bst->root);
-    printf("Size: %i\n", size(bst->root));
+    //delete_tree(bst);
+    printf("Height: %i\n", get_height(bst));
+    printf("Min: %i\n", get_min(bst).value);
+    printf("Max: %i\n", get_max(bst).value);
 
     return 0;
 }
