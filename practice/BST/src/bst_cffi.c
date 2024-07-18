@@ -747,9 +747,33 @@ optional_int get_max(bst * t) {
     return max;
 }
 
+int recursively_check_binary_search_tree(bst_node * node) {
+    if (node->left == NULL) {
+        return 1;
+    }
+
+    if (node->left->value > node->value) {
+        return 0;
+    }
+
+    if (node->right == NULL) {
+        return 1;
+    }
+
+    if (node->right->value < node->value) {
+        return 0;
+    }
+
+    return recursively_check_binary_search_tree(node->left) * recursively_check_binary_search_tree(node->right);
+}
+
 // Validate BST https://leetcode.com/problems/validate-binary-search-tree/
 int is_binary_search_tree(bst * t) {
-    return 0;
+    if (t->root == NULL) {
+        return 1;
+    }
+
+    return recursively_check_binary_search_tree(t->root);
 }
 
 // Delete a value from the BST (if any)

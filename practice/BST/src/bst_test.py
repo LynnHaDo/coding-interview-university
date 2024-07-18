@@ -120,7 +120,7 @@ class BSTTest(unittest.TestCase):
 
         self.assertEqual(self.module_lib.get_max(t).valid, 0)
     
-    def test_get_min(self):
+    def test_get_max(self):
         t = self.module_lib.create_bst()
         items = [10, 1000, 12, 4, 100, 13, -2]
 
