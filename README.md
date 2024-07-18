@@ -787,7 +787,7 @@ if you can identify the runtime complexity of different algorithms. It's a super
             - Depth: Number of edges from a node X to the root
         - [x] get_min   // returns the minimum value stored in the tree
         - [x] get_max   // returns the maximum value stored in the tree
-        - [ ] [is_binary_search_tree](https://leetcode.com/problems/validate-binary-search-tree/)
+        - [x] [is_binary_search_tree](https://leetcode.com/problems/validate-binary-search-tree/)
         - [ ] delete_value
         - [ ] get_successor // returns the next-highest value in the tree after given value, -1 if none
 

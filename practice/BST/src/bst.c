@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "bst.h"
+#include "../../Arrays/arraylist.c"
 
 const optional_int INVALID = {0, 0};
 
@@ -179,24 +180,14 @@ optional_int get_max(bst * t) {
     return max;
 }
 
-int recursively_check_binary_search_tree(bst_node * node) {
-    if (node->left == NULL) {
-        return 1;
+void inorder_traverse(bst_node * node, arraylist_ptr list) {
+    if (node == NULL) {
+        return;
     }
 
-    if (node->left->value > node->value) {
-        return 0;
-    }
-
-    if (node->right == NULL) {
-        return 1;
-    }
-
-    if (node->right->value < node->value) {
-        return 0;
-    }
-
-    return recursively_check_binary_search_tree(node->left) * recursively_check_binary_search_tree(node->right);
+    inorder_traverse(node->left);
+    push(list, node->value);
+    inorder_traverse(node->right);
 }
 
 // Validate BST https://leetcode.com/problems/validate-binary-search-tree/
@@ -205,12 +196,25 @@ int is_binary_search_tree(bst * t) {
         return 1;
     }
 
-    return recursively_check_binary_search_tree(t->root);
+    arraylist_ptr inorder_output = create_arraylist();
+    inorder_traverse(t->root, inorder_output);
+    
+    for (int i = 0; i < size(inorder_output) - 1; i++) {
+        if (*(inorder_output->data + i) >= *(inorder_output->data + i + 1)) {
+            return 0;
+        }
+    }
+
+    return 1;
 }
 
 // Delete a value from the BST (if any)
 int delete_value(bst * t, int value) {
-    return -1;
+    if (t->root == NULL) {
+        return 0;
+    }
+    
+    return 1;
 }
 
 // Returns the next-highest value in the tree after given value, -1 if none

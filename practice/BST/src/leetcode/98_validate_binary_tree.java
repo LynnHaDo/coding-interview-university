@@ -1,32 +1,23 @@
 package leetcode;
 
+import java.util.ArrayList;
+
 class Solution98 {
     /**
-     * Fail: [5, 4, 6, null, null, 3, 7]
-     * @param left
-     * @param cur
-     * @param right
-     * @return
+     * Conduct inorder traversal on a tree
+     * @param node root node
+     * @param output inorder traversal result
      */
-    private boolean isValidTrio(TreeNode left, TreeNode cur, TreeNode right) {
-        if (left == null && right == null) {
-            return true;
+    private void inorderTraversal(TreeNode node, ArrayList<Integer> output) {
+        if (node == null) {
+            return;
         }
 
-        if (left == null && right != null) {
-            return cur.val < right.val;
-        }
-
-        if (right == null && left != null) {
-            return cur.val > left.val;
-        }
-
-        if (cur.val >= right.val || cur.val <= left.val) {
-            return false;
-        }
-
-        return true;
+        inorderTraversal(node.left, output);
+        output.add(node.val);
+        inorderTraversal(node.right, output);
     }
+    
     /**
      * Check if a tree is a valid BST
      * @param root root of the tree
@@ -37,10 +28,17 @@ class Solution98 {
             return true;
         }
 
-        if (isValidTrio(root.left, root, root.right)) {
-            return isValidBST(root.left) && isValidBST(root.right);
+        ArrayList<Integer> inorderTraversalResult = new ArrayList<>();
+        
+        // Conduct in order traversal on the tree
+        inorderTraversal(root, inorderTraversalResult);
+
+        for (int i = 0; i < inorderTraversalResult.size() - 1; i++) {
+            if (inorderTraversalResult.get(i) >= inorderTraversalResult.get(i+1)) {
+                return false;
+            }
         }
 
-        return false;
+        return true;
     }
 }
