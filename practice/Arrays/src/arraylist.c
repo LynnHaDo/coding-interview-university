@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include "arraylist.h"
 
+optional_int_list INVALID = {0, 0};
+
 arraylist_ptr create_arraylist() {
     arraylist_ptr list = (arraylist_ptr)calloc(sizeof(arraylist), 1);
 
@@ -67,8 +69,6 @@ void push(arraylist * a, int item)
         resize(a, a->capacity * 2);
     } 
 
-    a->data[a->size] = (int *)malloc(sizeof(int*));
-
     // Update the last element to be the item
     *(a->data + (a->size)) = item;
     a->size++;
@@ -88,8 +88,6 @@ void insert(arraylist * a, int item, int index)
     {
         resize(a, a->capacity * 2);
     } 
-
-    a->data[a->size] = (int *)malloc(sizeof(int *));
     
     for (int i = a->size; i > index; i--){
         // Shift items to the right
@@ -109,8 +107,6 @@ void prepend(arraylist * a, int item){
         resize(a, a->capacity * 2);
     } 
 
-    a->data[a->size] = (int *)malloc(sizeof(int *));
-
     for (int i = a->size; i > 0; i--){
         // Shift items to the right
         *(a->data + i) = *(a->data + i - 1);
@@ -122,16 +118,16 @@ void prepend(arraylist * a, int item){
 }
 
 // Remove from end, return value
-int pop(arraylist * a)
+optional_int_list pop(arraylist * a)
 {
     if (is_empty(a))
     {
-        return NULL;
+        return INVALID;
     }
-    int last = *(a->data + (a->size));
 
-    free(a->data[a->size]);
-    *(a->data + (a->size)) = NULL;
+    optional_int_list last = {1, *(a->data + (a->size))};
+
+    free(a->data + a->size);
     a->size--;
     
     if (a->size <= a->capacity/4)
@@ -241,7 +237,7 @@ void destroy(arraylist * a)
     free(a);
 }
 
-void * print_arraylist(arraylist * a)
+void print_arraylist(arraylist * a)
 {
     if (a->size == 0)
     {
@@ -264,115 +260,4 @@ void * print_arraylist(arraylist * a)
             }
         }
     }
-}
-
-int main()
-{
-    arraylist_ptr list = create_arraylist();
-
-    printf("size(): %i\n", size(list));
-    printf("capacity(): %i\n", capacity(list));
-    printf("is_empty(): %i\n", is_empty(list));
-    print_arraylist(list);
-
-    printf("\n-------PUSH\n");
-    
-    push(list, 23);
-    push(list, 3);
-    push(list, 2003);
-
-    printf("size(): %i\n", size(list));
-    printf("capacity(): %i\n", capacity(list));
-    printf("is_empty(): %i\n", is_empty(list));
-    print_arraylist(list);
-    printf("at(): %i\n", *(at(list, 1)));
-
-    printf("\n-------INSERT\n");
-    
-    insert(list, 2, 1);
-    insert(list, 23, 0);
-    insert(list, 18, 9); // invalid
-    insert(list, 10, 4);
-
-    printf("size(): %i\n", size(list));
-    printf("capacity(): %i\n", capacity(list));
-    printf("is_empty(): %i\n", is_empty(list));
-    print_arraylist(list);
-    //printf("at(): %i\n", *(at(list, 10))); // NULL 
-
-    printf("\n-------PREPEND\n");
-    
-    prepend(list, 1);
-    push(list, 13);
-    prepend(list, 25);
-    prepend(list, 120);
-    insert(list, 103021, 2);
-    prepend(list, 110);
-
-    printf("size(): %i\n", size(list));
-    printf("capacity(): %i\n", capacity(list));
-    printf("is_empty(): %i\n", is_empty(list));
-    print_arraylist(list);
-    //printf("at(): %i\n", *(at(list, 8))); // NULL 
-
-    printf("\n-------POP\n");
-    
-    pop(list);
-    insert(list, 679, 8);
-    //pop(list);
-
-    printf("size(): %i\n", size(list));
-    printf("capacity(): %i\n", capacity(list));
-    printf("is_empty(): %i\n", is_empty(list));
-    print_arraylist(list);
-    
-    printf("\n-------DELETE\n");
-    
-    delete(list, 5);
-    delete(list, 4);
-    insert(list, 13, 4);
-
-    printf("size(): %i\n", size(list));
-    printf("capacity(): %i\n", capacity(list));
-    printf("is_empty(): %i\n", is_empty(list));
-    print_arraylist(list);
-
-    printf("\n-------REMOVE\n");
-    
-    remove_item(list, 23);
-    insert(list, 13, 4);
-    insert(list, 13, 0);
-    insert(list, 13, 8);
-    push(list, 13);
-    pop(list);
-    remove_item(list, 13);
-
-    printf("size(): %i\n", size(list));
-    printf("capacity(): %i\n", capacity(list));
-    printf("is_empty(): %i\n", is_empty(list));
-    print_arraylist(list);
-
-    printf("\n-------FIND\n");
-    
-    printf("find(list, 24): %i\n", find(list, 24)); // -1
-    printf("find(list, 25): %i\n", find(list, 25)); // 2
-    printf("find(list, 10): %i\n", find(list, 10)); // 7
-    remove_item(list, 10);
-    printf("size(): %i\n", size(list));
-    printf("capacity(): %i\n", capacity(list));
-    printf("is_empty(): %i\n", is_empty(list));
-    print_arraylist(list);
-
-    printf("\n-------\n");
-
-    printf("find(list, 10): %i\n", find(list, 10)); // -1
-    printf("find(list, 2003): %i\n", find(list, 2003)); // 7
-    delete(list, 7); 
-
-    printf("size(): %i\n", size(list));
-    printf("capacity(): %i\n", capacity(list));
-    printf("is_empty(): %i\n", is_empty(list));
-    print_arraylist(list);
-
-    printf("find(list, 2003): %i\n", find(list, 2003)); // -1
 }

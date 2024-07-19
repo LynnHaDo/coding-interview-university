@@ -18,13 +18,15 @@ bst;
 
 bst * create_bst();
 
+bst_node * get_new_node();
+
 bst_node * get_root(bst * t);
 
 // insert value into tree](https://leetcode.com/problems/insert-into-a-binary-search-tree/submissions/987660183/)
-void insert(bst * t, int value);    
+void insert_tree(bst * t, int value);    
 
 // get count of values stored
-int size(bst * t);
+int size_tree(bst * t);
 
 // prints the values in the tree, from min to max
 void print_values(bst_node * t);

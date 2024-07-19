@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "bst.h"
-#include "../../Arrays/arraylist.c"
+#include "../../Arrays/src/arraylist.c"
 
-const optional_int INVALID = {0, 0};
+optional_int INVALID_INT = {0, 0};
 
 bst * create_bst() {
     bst * t = (bst *)malloc(sizeof(struct bst));
@@ -20,8 +20,18 @@ bst_node * get_root(bst * t) {
     return t->root;
 }
 
+bst_node * get_new_node() {
+    bst_node * new_node = (bst_node *)malloc(sizeof(struct bst_node));
+
+    if (new_node == NULL) {
+        return NULL;
+    }
+
+    return new_node;
+}
+
 // insert value into tree](https://leetcode.com/problems/insert-into-a-binary-search-tree/submissions/987660183/)
-void insert(bst * t, int value) {
+void insert_tree(bst * t, int value) {
     bst_node * new_node = (bst_node *)malloc(sizeof(struct bst_node));
     new_node->value = value;
 
@@ -60,7 +70,7 @@ int recursively_count_size(bst_node * node) {
 }
 
 // get count of values stored
-int size(bst * t) {
+int size_tree(bst * t) {
     return recursively_count_size(t->root);
 }
 
@@ -149,7 +159,7 @@ int get_height(bst * t) {
 // returns the minimum value stored in the tree
 optional_int get_min(bst * t) {
     if (t->root == NULL) {
-        return INVALID;
+        return INVALID_INT;
     }
 
     optional_int min = {1, 0};
@@ -166,7 +176,7 @@ optional_int get_min(bst * t) {
 // returns the maximum value stored in the tree
 optional_int get_max(bst * t) {
     if (t->root == NULL) {
-        return INVALID;
+        return INVALID_INT;
     }
 
     optional_int max = {1, 0};
@@ -185,9 +195,9 @@ void inorder_traverse(bst_node * node, arraylist_ptr list) {
         return;
     }
 
-    inorder_traverse(node->left);
+    inorder_traverse(node->left, list);
     push(list, node->value);
-    inorder_traverse(node->right);
+    inorder_traverse(node->right, list);
 }
 
 // Validate BST https://leetcode.com/problems/validate-binary-search-tree/
@@ -208,13 +218,62 @@ int is_binary_search_tree(bst * t) {
     return 1;
 }
 
+/**
+ * Recursively find the node and delete it
+ * @param node root node to start with
+ * @param value key to look up for
+ */
+bst_node * recursively_delete_value(bst_node * node, int value) {
+    if (node == NULL) {
+        return NULL;
+    }
+
+    if (value < node->value) {
+        node->left = recursively_delete_value(node->left, value);
+    }
+    else if (value > node->value) {
+        node->right = recursively_delete_value(node->right, value);
+    } 
+    else {
+        // Leaf node
+        if (node->left == NULL && node->right == NULL) {
+            free(node);
+            return NULL;
+        }
+        // One child
+        else if (node->left == NULL && node->right != NULL) {
+            return node->right;
+        }
+        else if (node->left != NULL && node->right == NULL) {
+            return node->left;
+        }
+        // Two children
+        else {
+            bst_node * temp = node->right;
+            // Find the minimum of the right subtree
+            while (temp->left != NULL) {
+                temp = temp->left;
+            }
+
+            node->value = temp->value;
+            node->right = recursively_delete_value(node->right, value);
+        }
+
+    }
+    return node;
+}
+
 // Delete a value from the BST (if any)
 int delete_value(bst * t, int value) {
     if (t->root == NULL) {
         return 0;
     }
+
+    if (recursively_delete_value(t->root, value) == NULL) {
+        return 0;
+    }
     
-    return 1;
+    return 1; // the value is deleted
 }
 
 // Returns the next-highest value in the tree after given value, -1 if none
@@ -225,22 +284,27 @@ int get_successor(bst * t, int value) {
 int main() {
     bst * bst = create_bst();
 
-    insert(bst, 10);
+    insert_tree(bst, 10);
     print_values(bst->root);
     printf("\n");
 
-    insert(bst, 12);
-    insert(bst, 4);
-    insert(bst, 100);
-    insert(bst, 13);
+    insert_tree(bst, 12);
+    insert_tree(bst, 4);
+    insert_tree(bst, 100);
+    insert_tree(bst, 13);
     print_values(bst->root);
     printf("\n");
-    printf("%i\n", size(bst));
+    printf("%i\n", size_tree(bst));
 
     //delete_tree(bst);
     printf("Height: %i\n", get_height(bst));
     printf("Min: %i\n", get_min(bst).value);
     printf("Max: %i\n", get_max(bst).value);
+
+    delete_value(bst, 12);
+    print_values(bst->root);
+    printf("\n");
+    printf("%i\n", size_tree(bst));
 
     return 0;
 }

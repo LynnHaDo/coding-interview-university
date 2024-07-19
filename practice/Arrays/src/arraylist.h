@@ -1,3 +1,9 @@
+typedef struct optional_int_list {
+    int valid;
+    int value;
+}
+optional_int_list;
+
 typedef struct arraylist {
     int size, capacity;
     int * data;
@@ -20,7 +26,7 @@ void insert(arraylist * a, int item, int index);
 // Insert above at index 0
 void prepend(arraylist * a, int item);
 // Remove from end, return value
-int pop(arraylist * a);
+optional_int_list pop(arraylist * a);
 // Delete item at index, shifting all trailing elements left
 void delete(arraylist * a, int index);
 // Looks for value and removes index holding it (even if in multiple places)
