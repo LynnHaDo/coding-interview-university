@@ -1,8 +1,8 @@
-package leetcode;
+package leetcode.src;
 
 import java.util.ArrayList;
 
-class Solution98 {
+public class Solution98 {
     /**
      * Conduct inorder traversal on a tree
      * @param node root node

@@ -1,6 +1,6 @@
-package leetcode;
+package leetcode.src;
 
-class Solution450 {
+public class Solution450 {
     public TreeNode deleteNode(TreeNode root, int key) {
         if (root == null) {
             return null;
@@ -37,29 +37,5 @@ class Solution450 {
         }
 
         return root;
-    }
-
-    private void printTree(TreeNode root) {
-        if (root == null) {
-            return;
-        }
-
-        System.out.println(root.val);
-        printTree(root.left);
-        printTree(root.right);
-    }
-
-    public static void main(String[] args) {
-        Solution450 solution = new Solution450();
-        // root = [5,3,6,2,4,null,7], key = 3
-        TreeNode root = new TreeNode(5);
-        root.left = new TreeNode(3);
-        root.right = new TreeNode(6);
-        root.left.left = new TreeNode(2);
-        root.left.right = new TreeNode(4);
-        root.right.right = new TreeNode(7);
-
-        solution.deleteNode(root, 5);
-        solution.printTree(root);
     }
 }

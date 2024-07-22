@@ -1,6 +1,6 @@
-package leetcode;
+package leetcode.src;
 
-class Solution104 {
+public class Solution104 {
 
     private int recursivelyCountDepth(TreeNode node) {
         if (node == null) {
