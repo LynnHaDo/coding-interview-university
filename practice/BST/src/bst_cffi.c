@@ -832,21 +832,67 @@ bst_node * recursively_delete_value(bst_node * node, int value) {
 }
 
 // Delete a value from the BST (if any)
-int delete_value(bst * t, int value) {
+void delete_value(bst * t, int value) {
     if (t->root == NULL) {
-        return 0;
+        return;
     }
 
-    if (recursively_delete_value(t->root, value) == NULL) {
-        return 0;
-    }
-    
-    return 1; // the value is deleted
+    recursively_delete_value(t->root, value);
 }
 
 // Returns the next-highest value in the tree after given value, -1 if none
-int get_successor(bst * t, int value) {
-    return -1;
+optional_int get_successor(bst * t, int value) {
+    bst_node * root = t->root;
+    bst_node * cur = t->root;
+
+    // Find the node containing the passed in value
+    while (cur != NULL) {
+        if (value < cur->value) {
+            cur = cur->left;
+        } 
+        else if (value > cur->value) {
+            cur = cur->right;
+        }
+        else {
+            bst_node * successor = NULL;
+            optional_int successor_int = INVALID_INT;
+
+            if (cur->right != NULL) {
+                // find the minimum of the right subtree
+                cur = cur->right;
+                while (cur->left != NULL) {
+                    cur = cur->left;
+                }
+                successor_int.valid = 1;
+                successor_int.value = cur->value;
+            }
+            else {
+                // Otherwise, search from the root 
+                while (root != NULL) {
+                    if (value < root->value) {
+                        successor = root;
+                        root = root->left;
+                    } 
+                    else if (value > root->value) {
+                        root = root->right;
+                    } 
+                    else {
+                        break;
+                    }
+                }
+
+                if (successor != NULL) {
+                    successor_int.valid = 1;
+                    successor_int.value = successor->value;
+                }
+            }
+
+            return successor_int;
+        }
+    }
+    
+    // The given value is not found in the tree
+    return INVALID_INT;
 }
 
 int main() {
@@ -882,10 +928,10 @@ int main() {
 static void *_cffi_types[] = {
 /*  0 */ _CFFI_OP(_CFFI_OP_FUNCTION, 3), // bst *()(void)
 /*  1 */ _CFFI_OP(_CFFI_OP_FUNCTION_END, 0),
-/*  2 */ _CFFI_OP(_CFFI_OP_FUNCTION, 25), // bst_node *()(bst *)
-/*  3 */ _CFFI_OP(_CFFI_OP_POINTER, 27), // bst *
+/*  2 */ _CFFI_OP(_CFFI_OP_FUNCTION, 29), // bst_node *()(bst *)
+/*  3 */ _CFFI_OP(_CFFI_OP_POINTER, 31), // bst *
 /*  4 */ _CFFI_OP(_CFFI_OP_FUNCTION_END, 0),
-/*  5 */ _CFFI_OP(_CFFI_OP_FUNCTION, 25), // bst_node *()(void)
+/*  5 */ _CFFI_OP(_CFFI_OP_FUNCTION, 29), // bst_node *()(void)
 /*  6 */ _CFFI_OP(_CFFI_OP_FUNCTION_END, 0),
 /*  7 */ _CFFI_OP(_CFFI_OP_FUNCTION, 12), // int()(bst *)
 /*  8 */ _CFFI_OP(_CFFI_OP_NOOP, 3),
@@ -894,23 +940,27 @@ static void *_cffi_types[] = {
 /* 11 */ _CFFI_OP(_CFFI_OP_NOOP, 3),
 /* 12 */ _CFFI_OP(_CFFI_OP_PRIMITIVE, 7), // int
 /* 13 */ _CFFI_OP(_CFFI_OP_FUNCTION_END, 0),
-/* 14 */ _CFFI_OP(_CFFI_OP_FUNCTION, 29), // optional_int()(bst *)
+/* 14 */ _CFFI_OP(_CFFI_OP_FUNCTION, 33), // optional_int()(bst *)
 /* 15 */ _CFFI_OP(_CFFI_OP_NOOP, 3),
 /* 16 */ _CFFI_OP(_CFFI_OP_FUNCTION_END, 0),
-/* 17 */ _CFFI_OP(_CFFI_OP_FUNCTION, 30), // void()(bst *)
+/* 17 */ _CFFI_OP(_CFFI_OP_FUNCTION, 33), // optional_int()(bst *, int)
 /* 18 */ _CFFI_OP(_CFFI_OP_NOOP, 3),
-/* 19 */ _CFFI_OP(_CFFI_OP_FUNCTION_END, 0),
-/* 20 */ _CFFI_OP(_CFFI_OP_FUNCTION, 30), // void()(bst *, int)
-/* 21 */ _CFFI_OP(_CFFI_OP_NOOP, 3),
-/* 22 */ _CFFI_OP(_CFFI_OP_PRIMITIVE, 7),
+/* 19 */ _CFFI_OP(_CFFI_OP_PRIMITIVE, 7),
+/* 20 */ _CFFI_OP(_CFFI_OP_FUNCTION_END, 0),
+/* 21 */ _CFFI_OP(_CFFI_OP_FUNCTION, 34), // void()(bst *)
+/* 22 */ _CFFI_OP(_CFFI_OP_NOOP, 3),
 /* 23 */ _CFFI_OP(_CFFI_OP_FUNCTION_END, 0),
-/* 24 */ _CFFI_OP(_CFFI_OP_FUNCTION, 30), // void()(bst_node *)
-/* 25 */ _CFFI_OP(_CFFI_OP_POINTER, 28), // bst_node *
-/* 26 */ _CFFI_OP(_CFFI_OP_FUNCTION_END, 0),
-/* 27 */ _CFFI_OP(_CFFI_OP_STRUCT_UNION, 0), // bst
-/* 28 */ _CFFI_OP(_CFFI_OP_STRUCT_UNION, 1), // bst_node
-/* 29 */ _CFFI_OP(_CFFI_OP_STRUCT_UNION, 2), // optional_int
-/* 30 */ _CFFI_OP(_CFFI_OP_PRIMITIVE, 0), // void
+/* 24 */ _CFFI_OP(_CFFI_OP_FUNCTION, 34), // void()(bst *, int)
+/* 25 */ _CFFI_OP(_CFFI_OP_NOOP, 3),
+/* 26 */ _CFFI_OP(_CFFI_OP_PRIMITIVE, 7),
+/* 27 */ _CFFI_OP(_CFFI_OP_FUNCTION_END, 0),
+/* 28 */ _CFFI_OP(_CFFI_OP_FUNCTION, 34), // void()(bst_node *)
+/* 29 */ _CFFI_OP(_CFFI_OP_POINTER, 32), // bst_node *
+/* 30 */ _CFFI_OP(_CFFI_OP_FUNCTION_END, 0),
+/* 31 */ _CFFI_OP(_CFFI_OP_STRUCT_UNION, 0), // bst
+/* 32 */ _CFFI_OP(_CFFI_OP_STRUCT_UNION, 1), // bst_node
+/* 33 */ _CFFI_OP(_CFFI_OP_STRUCT_UNION, 2), // optional_int
+/* 34 */ _CFFI_OP(_CFFI_OP_PRIMITIVE, 0), // void
 };
 
 static bst * _cffi_d_create_bst(void)
@@ -975,9 +1025,9 @@ _cffi_f_delete_tree(PyObject *self, PyObject *arg0)
 #  define _cffi_f_delete_tree _cffi_d_delete_tree
 #endif
 
-static int _cffi_d_delete_value(bst * x0, int x1)
+static void _cffi_d_delete_value(bst * x0, int x1)
 {
-  return delete_value(x0, x1);
+  delete_value(x0, x1);
 }
 #ifndef PYPY_VERSION
 static PyObject *
@@ -987,8 +1037,6 @@ _cffi_f_delete_value(PyObject *self, PyObject *args)
   int x1;
   Py_ssize_t datasize;
   struct _cffi_freeme_s *large_args_free = NULL;
-  int result;
-  PyObject *pyresult;
   PyObject *arg0;
   PyObject *arg1;
 
@@ -1010,14 +1058,14 @@ _cffi_f_delete_value(PyObject *self, PyObject *args)
 
   Py_BEGIN_ALLOW_THREADS
   _cffi_restore_errno();
-  { result = delete_value(x0, x1); }
+  { delete_value(x0, x1); }
   _cffi_save_errno();
   Py_END_ALLOW_THREADS
 
   (void)self; /* unused */
-  pyresult = _cffi_from_c_int(result, int);
   if (large_args_free != NULL) _cffi_free_array_arguments(large_args_free);
-  return pyresult;
+  Py_INCREF(Py_None);
+  return Py_None;
 }
 #else
 #  define _cffi_f_delete_value _cffi_d_delete_value
@@ -1091,7 +1139,7 @@ _cffi_f_get_max(PyObject *self, PyObject *arg0)
   Py_END_ALLOW_THREADS
 
   (void)self; /* unused */
-  pyresult = _cffi_from_c_struct((char *)&result, _cffi_type(29));
+  pyresult = _cffi_from_c_struct((char *)&result, _cffi_type(33));
   if (large_args_free != NULL) _cffi_free_array_arguments(large_args_free);
   return pyresult;
 }
@@ -1132,7 +1180,7 @@ _cffi_f_get_min(PyObject *self, PyObject *arg0)
   Py_END_ALLOW_THREADS
 
   (void)self; /* unused */
-  pyresult = _cffi_from_c_struct((char *)&result, _cffi_type(29));
+  pyresult = _cffi_from_c_struct((char *)&result, _cffi_type(33));
   if (large_args_free != NULL) _cffi_free_array_arguments(large_args_free);
   return pyresult;
 }
@@ -1162,7 +1210,7 @@ _cffi_f_get_new_node(PyObject *self, PyObject *noarg)
 
   (void)self; /* unused */
   (void)noarg; /* unused */
-  pyresult = _cffi_from_c_pointer((char *)result, _cffi_type(25));
+  pyresult = _cffi_from_c_pointer((char *)result, _cffi_type(29));
   return pyresult;
 }
 #else
@@ -1199,7 +1247,7 @@ _cffi_f_get_root(PyObject *self, PyObject *arg0)
   Py_END_ALLOW_THREADS
 
   (void)self; /* unused */
-  pyresult = _cffi_from_c_pointer((char *)result, _cffi_type(25));
+  pyresult = _cffi_from_c_pointer((char *)result, _cffi_type(29));
   if (large_args_free != NULL) _cffi_free_array_arguments(large_args_free);
   return pyresult;
 }
@@ -1207,7 +1255,7 @@ _cffi_f_get_root(PyObject *self, PyObject *arg0)
 #  define _cffi_f_get_root _cffi_d_get_root
 #endif
 
-static int _cffi_d_get_successor(bst * x0, int x1)
+static optional_int _cffi_d_get_successor(bst * x0, int x1)
 {
   return get_successor(x0, x1);
 }
@@ -1219,7 +1267,7 @@ _cffi_f_get_successor(PyObject *self, PyObject *args)
   int x1;
   Py_ssize_t datasize;
   struct _cffi_freeme_s *large_args_free = NULL;
-  int result;
+  optional_int result;
   PyObject *pyresult;
   PyObject *arg0;
   PyObject *arg1;
@@ -1247,12 +1295,15 @@ _cffi_f_get_successor(PyObject *self, PyObject *args)
   Py_END_ALLOW_THREADS
 
   (void)self; /* unused */
-  pyresult = _cffi_from_c_int(result, int);
+  pyresult = _cffi_from_c_struct((char *)&result, _cffi_type(33));
   if (large_args_free != NULL) _cffi_free_array_arguments(large_args_free);
   return pyresult;
 }
 #else
-#  define _cffi_f_get_successor _cffi_d_get_successor
+static void _cffi_f_get_successor(optional_int *result, bst * x0, int x1)
+{
+  { *result = get_successor(x0, x1); }
+}
 #endif
 
 static void _cffi_d_insert_tree(bst * x0, int x1)
@@ -1400,10 +1451,10 @@ _cffi_f_print_values(PyObject *self, PyObject *arg0)
   struct _cffi_freeme_s *large_args_free = NULL;
 
   datasize = _cffi_prepare_pointer_call_argument(
-      _cffi_type(25), arg0, (char **)&x0);
+      _cffi_type(29), arg0, (char **)&x0);
   if (datasize != 0) {
     x0 = ((size_t)datasize) <= 640 ? (bst_node *)alloca((size_t)datasize) : NULL;
-    if (_cffi_convert_array_argument(_cffi_type(25), arg0, (char **)&x0,
+    if (_cffi_convert_array_argument(_cffi_type(29), arg0, (char **)&x0,
             datasize, &large_args_free) < 0)
       return NULL;
   }
@@ -1493,34 +1544,34 @@ struct _cffi_align__optional_int { char x; optional_int y; };
 
 static const struct _cffi_global_s _cffi_globals[] = {
   { "create_bst", (void *)_cffi_f_create_bst, _CFFI_OP(_CFFI_OP_CPYTHON_BLTN_N, 0), (void *)_cffi_d_create_bst },
-  { "delete_tree", (void *)_cffi_f_delete_tree, _CFFI_OP(_CFFI_OP_CPYTHON_BLTN_O, 17), (void *)_cffi_d_delete_tree },
-  { "delete_value", (void *)_cffi_f_delete_value, _CFFI_OP(_CFFI_OP_CPYTHON_BLTN_V, 10), (void *)_cffi_d_delete_value },
+  { "delete_tree", (void *)_cffi_f_delete_tree, _CFFI_OP(_CFFI_OP_CPYTHON_BLTN_O, 21), (void *)_cffi_d_delete_tree },
+  { "delete_value", (void *)_cffi_f_delete_value, _CFFI_OP(_CFFI_OP_CPYTHON_BLTN_V, 24), (void *)_cffi_d_delete_value },
   { "get_height", (void *)_cffi_f_get_height, _CFFI_OP(_CFFI_OP_CPYTHON_BLTN_O, 7), (void *)_cffi_d_get_height },
   { "get_max", (void *)_cffi_f_get_max, _CFFI_OP(_CFFI_OP_CPYTHON_BLTN_O, 14), (void *)_cffi_d_get_max },
   { "get_min", (void *)_cffi_f_get_min, _CFFI_OP(_CFFI_OP_CPYTHON_BLTN_O, 14), (void *)_cffi_d_get_min },
   { "get_new_node", (void *)_cffi_f_get_new_node, _CFFI_OP(_CFFI_OP_CPYTHON_BLTN_N, 5), (void *)_cffi_d_get_new_node },
   { "get_root", (void *)_cffi_f_get_root, _CFFI_OP(_CFFI_OP_CPYTHON_BLTN_O, 2), (void *)_cffi_d_get_root },
-  { "get_successor", (void *)_cffi_f_get_successor, _CFFI_OP(_CFFI_OP_CPYTHON_BLTN_V, 10), (void *)_cffi_d_get_successor },
-  { "insert_tree", (void *)_cffi_f_insert_tree, _CFFI_OP(_CFFI_OP_CPYTHON_BLTN_V, 20), (void *)_cffi_d_insert_tree },
+  { "get_successor", (void *)_cffi_f_get_successor, _CFFI_OP(_CFFI_OP_CPYTHON_BLTN_V, 17), (void *)_cffi_d_get_successor },
+  { "insert_tree", (void *)_cffi_f_insert_tree, _CFFI_OP(_CFFI_OP_CPYTHON_BLTN_V, 24), (void *)_cffi_d_insert_tree },
   { "is_binary_search_tree", (void *)_cffi_f_is_binary_search_tree, _CFFI_OP(_CFFI_OP_CPYTHON_BLTN_O, 7), (void *)_cffi_d_is_binary_search_tree },
   { "is_in_tree", (void *)_cffi_f_is_in_tree, _CFFI_OP(_CFFI_OP_CPYTHON_BLTN_V, 10), (void *)_cffi_d_is_in_tree },
-  { "print_values", (void *)_cffi_f_print_values, _CFFI_OP(_CFFI_OP_CPYTHON_BLTN_O, 24), (void *)_cffi_d_print_values },
+  { "print_values", (void *)_cffi_f_print_values, _CFFI_OP(_CFFI_OP_CPYTHON_BLTN_O, 28), (void *)_cffi_d_print_values },
   { "size_tree", (void *)_cffi_f_size_tree, _CFFI_OP(_CFFI_OP_CPYTHON_BLTN_O, 7), (void *)_cffi_d_size_tree },
 };
 
 static const struct _cffi_field_s _cffi_fields[] = {
   { "root", offsetof(bst, root),
             sizeof(((bst *)0)->root),
-            _CFFI_OP(_CFFI_OP_NOOP, 25) },
+            _CFFI_OP(_CFFI_OP_NOOP, 29) },
   { "value", offsetof(bst_node, value),
              sizeof(((bst_node *)0)->value),
              _CFFI_OP(_CFFI_OP_NOOP, 12) },
   { "left", offsetof(bst_node, left),
             sizeof(((bst_node *)0)->left),
-            _CFFI_OP(_CFFI_OP_NOOP, 25) },
+            _CFFI_OP(_CFFI_OP_NOOP, 29) },
   { "right", offsetof(bst_node, right),
              sizeof(((bst_node *)0)->right),
-             _CFFI_OP(_CFFI_OP_NOOP, 25) },
+             _CFFI_OP(_CFFI_OP_NOOP, 29) },
   { "valid", offsetof(optional_int, valid),
              sizeof(((optional_int *)0)->valid),
              _CFFI_OP(_CFFI_OP_NOOP, 12) },
@@ -1530,18 +1581,18 @@ static const struct _cffi_field_s _cffi_fields[] = {
 };
 
 static const struct _cffi_struct_union_s _cffi_struct_unions[] = {
-  { "bst", 27, _CFFI_F_CHECK_FIELDS,
+  { "bst", 31, _CFFI_F_CHECK_FIELDS,
     sizeof(bst), offsetof(struct _cffi_align__bst, y), 0, 1 },
-  { "bst_node", 28, _CFFI_F_CHECK_FIELDS,
+  { "bst_node", 32, _CFFI_F_CHECK_FIELDS,
     sizeof(bst_node), offsetof(struct _cffi_align__bst_node, y), 1, 3 },
-  { "optional_int", 29, _CFFI_F_CHECK_FIELDS,
+  { "optional_int", 33, _CFFI_F_CHECK_FIELDS,
     sizeof(optional_int), offsetof(struct _cffi_align__optional_int, y), 4, 2 },
 };
 
 static const struct _cffi_typename_s _cffi_typenames[] = {
-  { "bst", 27 },
-  { "bst_node", 28 },
-  { "optional_int", 29 },
+  { "bst", 31 },
+  { "bst_node", 32 },
+  { "optional_int", 33 },
 };
 
 static const struct _cffi_type_context_s _cffi_type_context = {
@@ -1556,7 +1607,7 @@ static const struct _cffi_type_context_s _cffi_type_context = {
   0,  /* num_enums */
   3,  /* num_typenames */
   NULL,  /* no includes */
-  31,  /* num_types */
+  35,  /* num_types */
   0,  /* flags */
 };
 

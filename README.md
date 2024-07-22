@@ -788,7 +788,7 @@ if you can identify the runtime complexity of different algorithms. It's a super
         - [x] get_min   // returns the minimum value stored in the tree
         - [x] get_max   // returns the maximum value stored in the tree
         - [x] [is_binary_search_tree](https://leetcode.com/problems/validate-binary-search-tree/)
-        - [ ] delete_value
+        - [x] delete_value
         - [ ] get_successor // returns the next-highest value in the tree after given value, -1 if none
 
 - ### Heap / Priority Queue / Binary Heap

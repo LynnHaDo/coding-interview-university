@@ -170,22 +170,21 @@ class BSTTest(unittest.TestCase):
         # output = [5,4,6,2,null,null,7]
         t = self.module_lib.create_bst()
 
-        root = self.module_lib.get_new_node()
-        root.value = 5
-        root.left = self.module_lib.get_new_node()
-        root.left.value = 3
-        root.right = self.module_lib.get_new_node()
-        root.right.value = 6
-        root.left.left = self.module_lib.get_new_node()
-        root.left.left.value = 2
-        root.left.right = self.module_lib.get_new_node()
-        root.left.right.value = 4
-        root.right.right = self.module_lib.get_new_node()
-        root.right.right.value = 7
-        t.root = root
+        t.root = self.module_lib.get_new_node()
+        t.root.value = 5
+        t.root.left = self.module_lib.get_new_node()
+        t.root.left.value = 3
+        t.root.right = self.module_lib.get_new_node()
+        t.root.right.value = 6
+        t.root.left.left = self.module_lib.get_new_node()
+        t.root.left.left.value = 2
+        t.root.left.right = self.module_lib.get_new_node()
+        t.root.left.right.value = 4
+        t.root.right.right = self.module_lib.get_new_node()
+        t.root.right.right.value = 7
 
         self.assertEqual(self.module_lib.is_in_tree(t, 3), 1)
-        self.assertEqual(self.module_lib.delete_value(t, 3), 1) 
+        self.module_lib.delete_value(t, 3)
         self.assertEqual(self.module_lib.is_in_tree(t, 3), 0) # no longer in tree
     
     def test_delete_value_no_value(self):
@@ -194,30 +193,106 @@ class BSTTest(unittest.TestCase):
 
         t = self.module_lib.create_bst()
 
-        root = self.module_lib.get_new_node()
-        root.value = 5
-        root.left = self.module_lib.get_new_node()
-        root.left.value = 3
-        root.right = self.module_lib.get_new_node()
-        root.right.value = 6
-        root.left.left = self.module_lib.get_new_node()
-        root.left.left.value = 2
-        root.left.right = self.module_lib.get_new_node()
-        root.left.right.value = 4
-        root.right.right = self.module_lib.get_new_node()
-        root.right.right.value = 7
-        t.root = root
+        t.root = self.module_lib.get_new_node()
+        t.root.value = 5
+        t.root.left = self.module_lib.get_new_node()
+        t.root.left.value = 3
+        t.root.right = self.module_lib.get_new_node()
+        t.root.right.value = 6
+        t.root.left.left = self.module_lib.get_new_node()
+        t.root.left.left.value = 2
+        t.root.left.right = self.module_lib.get_new_node()
+        t.root.left.right.value = 4
+        t.root.right.right = self.module_lib.get_new_node()
+        t.root.right.right.value = 7
 
-        self.assertEqual(self.module_lib.delete_value(t, 0), 0) 
+        self.module_lib.delete_value(t, 0)
         self.assertEqual(self.module_lib.size_tree(t), 6)
 
     def test_delete_value_empty(self):
         # root = [], key = 0
-        pass
+        t = self.module_lib.create_bst()
 
+        root = self.module_lib.get_new_node()
+        t.root = root
+
+        self.module_lib.delete_value(t, 0)
+        self.assertEqual(self.module_lib.size_tree(t), 1)
     
+    def test_get_successor_value_not_found(self):
+        t = self.module_lib.create_bst()
 
-        
+        t.root = self.module_lib.get_new_node()
+        t.root.value = 5
+        t.root.left = self.module_lib.get_new_node()
+        t.root.left.value = 3
+        t.root.right = self.module_lib.get_new_node()
+        t.root.right.value = 6
+        t.root.left.left = self.module_lib.get_new_node()
+        t.root.left.left.value = 2
+        t.root.left.right = self.module_lib.get_new_node()
+        t.root.left.right.value = 4
+        t.root.right.right = self.module_lib.get_new_node()
+        t.root.right.right.value = 7
+
+        self.assertEqual(self.module_lib.get_successor(t, 1).valid, 0)
+    
+    def test_get_successor_value_is_max(self):
+        t = self.module_lib.create_bst()
+
+        t.root = self.module_lib.get_new_node()
+        t.root.value = 5
+        t.root.left = self.module_lib.get_new_node()
+        t.root.left.value = 3
+        t.root.right = self.module_lib.get_new_node()
+        t.root.right.value = 6
+        t.root.left.left = self.module_lib.get_new_node()
+        t.root.left.left.value = 2
+        t.root.left.right = self.module_lib.get_new_node()
+        t.root.left.right.value = 4
+        t.root.right.right = self.module_lib.get_new_node()
+        t.root.right.right.value = 7
+
+        self.assertEqual(self.module_lib.get_successor(t, 7).valid, 0)
+        self.assertEqual(self.module_lib.get_successor(t, 7).value, 0)
+
+    def test_get_successor_value_with_right_child(self):
+        t = self.module_lib.create_bst()
+
+        t.root = self.module_lib.get_new_node()
+        t.root.value = 5
+        t.root.left = self.module_lib.get_new_node()
+        t.root.left.value = 3
+        t.root.right = self.module_lib.get_new_node()
+        t.root.right.value = 6
+        t.root.left.left = self.module_lib.get_new_node()
+        t.root.left.left.value = 2
+        t.root.left.right = self.module_lib.get_new_node()
+        t.root.left.right.value = 4
+        t.root.right.right = self.module_lib.get_new_node()
+        t.root.right.right.value = 7
+
+        self.assertEqual(self.module_lib.get_successor(t, 3).value, 4)
+        self.assertEqual(self.module_lib.get_successor(t, 3).valid, 1)
+    
+    def test_get_successor_value_without_right_child(self):
+        t = self.module_lib.create_bst()
+
+        t.root = self.module_lib.get_new_node()
+        t.root.value = 5
+        t.root.left = self.module_lib.get_new_node()
+        t.root.left.value = 3
+        t.root.right = self.module_lib.get_new_node()
+        t.root.right.value = 6
+        t.root.left.left = self.module_lib.get_new_node()
+        t.root.left.left.value = 2
+        t.root.left.right = self.module_lib.get_new_node()
+        t.root.left.right.value = 4
+        t.root.right.right = self.module_lib.get_new_node()
+        t.root.right.right.value = 7
+
+        self.assertEqual(self.module_lib.get_successor(t, 2).value, 3)
+        self.assertEqual(self.module_lib.get_successor(t, 4).value, 5)
 
 if __name__ == '__main__':
     try:

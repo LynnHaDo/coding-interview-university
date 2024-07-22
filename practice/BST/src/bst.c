@@ -264,21 +264,67 @@ bst_node * recursively_delete_value(bst_node * node, int value) {
 }
 
 // Delete a value from the BST (if any)
-int delete_value(bst * t, int value) {
+void delete_value(bst * t, int value) {
     if (t->root == NULL) {
-        return 0;
+        return;
     }
 
-    if (recursively_delete_value(t->root, value) == NULL) {
-        return 0;
-    }
-    
-    return 1; // the value is deleted
+    recursively_delete_value(t->root, value);
 }
 
 // Returns the next-highest value in the tree after given value, -1 if none
-int get_successor(bst * t, int value) {
-    return -1;
+optional_int get_successor(bst * t, int value) {
+    bst_node * root = t->root;
+    bst_node * cur = t->root;
+
+    // Find the node containing the passed in value
+    while (cur != NULL) {
+        if (value < cur->value) {
+            cur = cur->left;
+        } 
+        else if (value > cur->value) {
+            cur = cur->right;
+        }
+        else {
+            bst_node * successor = NULL;
+            optional_int successor_int = INVALID_INT;
+
+            if (cur->right != NULL) {
+                // find the minimum of the right subtree
+                cur = cur->right;
+                while (cur->left != NULL) {
+                    cur = cur->left;
+                }
+                successor_int.valid = 1;
+                successor_int.value = cur->value;
+            }
+            else {
+                // Otherwise, search from the root 
+                while (root != NULL) {
+                    if (value < root->value) {
+                        successor = root;
+                        root = root->left;
+                    } 
+                    else if (value > root->value) {
+                        root = root->right;
+                    } 
+                    else {
+                        break;
+                    }
+                }
+
+                if (successor != NULL) {
+                    successor_int.valid = 1;
+                    successor_int.value = successor->value;
+                }
+            }
+
+            return successor_int;
+        }
+    }
+    
+    // The given value is not found in the tree
+    return INVALID_INT;
 }
 
 int main() {

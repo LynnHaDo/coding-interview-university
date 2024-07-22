@@ -50,7 +50,7 @@ optional_int get_max(bst * t);
 int is_binary_search_tree(bst * t);
 
 // Delete a value from the BST (if any)
-int delete_value(bst * t, int value);
+void delete_value(bst * t, int value);
 
-// Returns the next-highest value in the tree after given value, -1 if none
-int get_successor(bst * t, int value); 
+// Returns the next-highest value in the tree after given value, INVALID_INT if none
+optional_int get_successor(bst * t, int value); 
