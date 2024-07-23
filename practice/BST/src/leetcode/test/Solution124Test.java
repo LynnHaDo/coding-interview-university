@@ -5,7 +5,7 @@ import leetcode.src.TreeNode;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.Assert.*;
+import static org.junit.Assert.*;
 
 public class Solution124Test {
     Solution124 solution;
@@ -27,6 +27,11 @@ public class Solution124Test {
 
     @Test 
     public void test1() {
-        
+        assertEquals(solution.maxPathSum(root1), 6);
+    }
+
+    @Test 
+    public void test2() {
+        assertEquals(solution.maxPathSum(root2), 42);
     }
 }

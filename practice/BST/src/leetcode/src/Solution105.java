@@ -1,30 +1,8 @@
 package leetcode.src;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 public class Solution105 {
-    private TreeNode recursivelyBuildTree(int[] preorder, int[] inorder, int preorderStart, int preorderEnd,
-            int inorderStart, int inorderEnd) {
-        if (preorderEnd - preorderStart + 1 <= 0 || inorderEnd - inorderStart + 1 <= 0) {
-            return null;
-        }
-
-        TreeNode center = new TreeNode(preorder[preorderStart]);
-        // Find the cutoff that divides the left and right subtrees
-        int mid = inorderStart;
-        for (;; mid++) {
-            if (inorder[mid] == center.val) {
-                break;
-            }
-        }
-
-        // Build left subtree
-        center.left = recursivelyBuildTree(preorder, inorder, 1, mid - 1, 0, mid -1);
-        center.right = recursivelyBuildTree(preorder, inorder, mid+1, preorder.length - 1, mid+1, inorder.length);
-        return center;
-    }
 
     /**
      * Construct and return the binary tree based on preorder and inorder traversal
@@ -44,6 +22,10 @@ public class Solution105 {
      * @return root of the tree
      */
     public TreeNode buildTree(int[] preorder, int[] inorder) {
+        if (preorder.length == 0 || inorder.length == 0) {
+            return null;
+        }
+
         // Root is the first element in preorder array
         TreeNode root = new TreeNode(preorder[0]);
 
@@ -54,15 +36,20 @@ public class Solution105 {
 
         // Find the cutoff that divides the left and right subtrees
         int mid = 0;
-        for (;; mid++) {
+        while (true) {
             if (inorder[mid] == root.val) {
                 break;
             }
+            mid++;
         }
 
         // Build left subtree
-        root.left = recursivelyBuildTree(preorder, inorder, 1, mid - 1, 0, mid -1);
-        root.right = recursivelyBuildTree(preorder, inorder, mid+1, preorder.length - 1, mid+1, inorder.length);
+        root.left = buildTree(  Arrays.copyOfRange(preorder, 1, mid+1), 
+                                Arrays.copyOfRange(inorder, 0, mid));
+        // Right subtree
+        root.right = buildTree( Arrays.copyOfRange(preorder, mid + 1, preorder.length), 
+                                Arrays.copyOfRange(inorder, mid + 1, inorder.length));
+
         return root;
     }
 }
