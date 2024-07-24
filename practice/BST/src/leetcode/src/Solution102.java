@@ -8,6 +8,7 @@ import java.util.Queue;
 import java.util.LinkedList;
 
 public class Solution102 {
+    private List<List<TreeNode>> levelOrderTree;
     private List<List<Integer>> levelOrder;
 
     /**
@@ -18,6 +19,7 @@ public class Solution102 {
      */
     public List<List<Integer>> levelOrder(TreeNode root) {
         levelOrder = new ArrayList<List<Integer>>();
+        levelOrderTree = new ArrayList<List<TreeNode>>();
 
         if (root == null) {
             return levelOrder;
@@ -33,14 +35,24 @@ public class Solution102 {
                 add(root.val);
             }
         });
+
+        levelOrderTree.add(new ArrayList<TreeNode>() {
+            {
+                add(root);
+            }
+        });
         
         while (!q.isEmpty()) {
             TreeNode node = q.poll();
             List<Integer> level = new ArrayList<Integer>();
-
-            if (levelOrder.size() > 1 && levelOrder.get(levelOrder.size() - 2).contains(node.val)) {
-                level = levelOrder.get(levelOrder.size() - 1);
+            List<TreeNode> levelTree = new ArrayList<TreeNode>();
+            
+            if (levelOrder.size() > 1 
+                && levelOrderTree.get(levelOrderTree.size() - 2).contains(node)) {
+                level = levelOrder.remove(levelOrder.size() - 1);
+                levelTree = levelOrderTree.remove(levelOrderTree.size() - 1);
             }
+            
 
             if (node == null) {
                 continue;
@@ -49,11 +61,13 @@ public class Solution102 {
             if (node.left != null) {
                 q.add(node.left);
                 level.add(node.left.val);
+                levelTree.add(node.left);
             }
 
             if (node.right != null) {
                 q.add(node.right);
                 level.add(node.right.val);
+                levelTree.add(node.right);
             }
 
             // No children
@@ -62,6 +76,7 @@ public class Solution102 {
             }
 
             levelOrder.add(level);
+            levelOrderTree.add(levelTree);
         }
 
         return levelOrder;
