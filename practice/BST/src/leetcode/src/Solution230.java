@@ -1,6 +1,21 @@
 package leetcode.src;
 
+import java.util.List;
+import java.util.ArrayList;
+
 public class Solution230 {
+    private List<Integer> inorderTraversal;
+
+    private void inorderTraverse(TreeNode root, int k) {
+        if (root == null || inorderTraversal.size() == k) {
+            return;
+        }
+
+        inorderTraverse(root.left, k);
+        inorderTraversal.add(root.val);
+        inorderTraverse(root.right, k);
+    }
+
     /**
      * Given the root of a binary search tree, 
      * and an integer k, return the kth smallest value 
@@ -15,6 +30,10 @@ public class Solution230 {
      * of the nodes in the tree.
      */
     public int kthSmallest(TreeNode root, int k) {
-        return root.val;
+        inorderTraversal = new ArrayList<>();
+        
+        inorderTraverse(root, k);
+
+        return inorderTraversal.get(k-1);
     }
 }
