@@ -1,8 +1,8 @@
-package practice.LinkedList.leetcode;
+package src.leetcode;
 
 import java.util.HashSet;
 
-class Solution141 {
+public class Solution141 {
     // Less efficient in terms of space and time
         // Space: O(n) -- need a set
         // Time: O(n) -- Loop through each element. 

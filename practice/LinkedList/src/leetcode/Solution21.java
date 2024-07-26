@@ -1,6 +1,6 @@
-package practice.LinkedList.leetcode;
+package src.leetcode;
 
-class Solution21 {
+public class Solution21 {
     /**
      * Merge the two lists into one sorted list
      * @param list1 sorted list 1

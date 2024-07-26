@@ -1,7 +1,7 @@
 import java.util.HashMap;
 import java.util.Set;
 
-class Solution242 {
+public class Solution242 {
     // Less efficient
     public boolean isAnagramNoGood(String s, String t) {
         if (s.length() != t.length()) {

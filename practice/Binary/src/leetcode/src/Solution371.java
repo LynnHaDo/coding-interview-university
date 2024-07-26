@@ -1,4 +1,6 @@
-class Solution371 {
+package leetcode.src;
+
+public class Solution371 {
     public int getSum(int a, int b) {
         
         while (b != 0) {
@@ -8,12 +10,5 @@ class Solution371 {
         }
 
         return a;
-    }
-
-    public static void main(String[] args){
-        Solution371 solution = new Solution371();
-        int a = 2;
-        int b = 3;
-        System.out.println(solution.getSum(a, b));
     }
 }

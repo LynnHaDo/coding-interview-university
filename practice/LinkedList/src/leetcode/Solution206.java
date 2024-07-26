@@ -1,6 +1,6 @@
-package practice.LinkedList.leetcode;
+package src.leetcode;
 
-class Solution206 {
+public class Solution206 {
     public ListNode reverseList(ListNode head) {
         // empty or 1 element
         if (head == null || head.next == null) {

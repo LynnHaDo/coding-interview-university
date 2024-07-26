@@ -1,6 +1,6 @@
 import java.util.HashSet;
 
-class Solution3 {
+public class Solution3 {
     // Sliding window
     public int lengthOfLongestSubstring(String s) {
         if (s.length() == 0 || s.length() == 1) {

@@ -1,8 +1,8 @@
-package practice.Binary.test.binary;
+package leetcode.test;
 
 import org.junit.Test;
 
-import practice.Binary.src.binary.Solution191;
+import leetcode.src.Solution191;
 
 import static org.junit.Assert.assertEquals;
 

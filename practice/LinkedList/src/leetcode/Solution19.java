@@ -1,6 +1,6 @@
-package practice.LinkedList.leetcode;
+package src.leetcode;
 
-class Solution19 {
+public class Solution19 {
     /*
      * Assume list is not empty
      */

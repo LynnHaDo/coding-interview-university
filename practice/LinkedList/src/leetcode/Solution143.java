@@ -1,4 +1,4 @@
-package practice.LinkedList.leetcode;
+package src.leetcode;
 
 /**
  * Definition for singly-linked list.
@@ -10,7 +10,7 @@ package practice.LinkedList.leetcode;
  *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
  * }
  */
-class Solution143 {
+public class Solution143 {
     private int size(ListNode head) {
         ListNode cur = head;
         int size = 0;

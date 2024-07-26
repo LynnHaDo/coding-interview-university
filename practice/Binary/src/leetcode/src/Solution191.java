@@ -1,4 +1,4 @@
-package practice.Binary.src.binary;
+package leetcode.src;
 
 public class Solution191 {
     /**
