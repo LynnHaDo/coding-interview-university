@@ -1,6 +1,7 @@
+package src;
 import java.util.HashSet;
 
-class Solution217 {
+public class Solution217 {
     // O(n^2)
     public boolean bruteForce(int[] nums) {
         // 1-element array

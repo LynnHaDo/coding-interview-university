@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class Solution208Test {
+public class TrieTest {
     Trie trie;
     String word;
 
@@ -36,7 +36,8 @@ public class Solution208Test {
          * trie.search("app"); // return True
          */
 
-        assertNull(trie);
+        assertNotNull(trie);
+        assertNull(trie.getRoot());
     }
 
     @Test 
@@ -65,5 +66,10 @@ public class Solution208Test {
     public void testStartWith() {
         trie.insert(word);
         assertTrue(trie.startsWith("app"));
+    }
+
+    @Test 
+    public void testInsertion2() {
+        
     }
 }

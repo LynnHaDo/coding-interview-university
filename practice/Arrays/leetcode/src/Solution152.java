@@ -1,4 +1,5 @@
-class Solution152 {
+package src;
+public class Solution152 {
     public int maxProduct(int[] nums) {
         if (nums.length == 1) {
             return nums[0];

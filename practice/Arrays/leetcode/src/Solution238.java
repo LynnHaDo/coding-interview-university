@@ -1,6 +1,7 @@
+package src;
 import java.util.Arrays;
 
-class Solution238 {
+public class Solution238 {
     // O(n^2)
     public int[] bruteForce(int[] nums) {
         int[] answer = new int[nums.length];

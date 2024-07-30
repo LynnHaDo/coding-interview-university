@@ -1,40 +1,38 @@
 package leetcode.src;
 
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 
 class TrieNode {
     String val;
-    TrieNode parent;
-    List<TrieNode> children;
+    HashMap<String, TrieNode> children;
+    boolean endString;
 
-    public TrieNode(){
-        this.children = new ArrayList<TrieNode>();
-    };
+    public TrieNode(){};
 
     public TrieNode(String val) {
         this.val = val;
-        this.children = new ArrayList<TrieNode>();
+        this.endString = false;
     }
 
     public String getValue() {
         return this.val;
     }
 
-    public TrieNode getParent() {
-        return parent;
-    }
-
-    public void setParent(TrieNode parent) {
-        this.parent = parent;
-    }
-
-    public List<TrieNode> getChildren() {
+    public HashMap<String, TrieNode> getChildren() {
         return this.children;
     }
 
-    public void addChild(TrieNode child) {
-        this.children.add(child);
+    public void addChild(String prefix, TrieNode child) {
+        if (this.children == null) {
+            this.children = new HashMap<String, TrieNode>();
+        }
+
+        this.children.put(prefix, child);
     }
 }
 
@@ -46,11 +44,39 @@ class TrieNode {
  */
 public class Trie {
     TrieNode root;
+    List<String> strings;
 
     /**
      * Initializes the trie object.
      */
-    public Trie() {}
+    public Trie() {
+        strings = new ArrayList<>();
+    }
+
+    public TrieNode getRoot() {
+        return this.root;
+    }
+
+    public void printTrie(TrieNode root, String string) {
+        if (root == null) {
+            return;
+        }
+
+        if (root.endString) {
+            strings.add(string);
+        }
+
+        char chr = 'a';
+
+        for (int i = 0; i < 26; i++) {
+            if (root.getChildren() != null && root.getChildren().containsKey(Character.toString(chr))) {
+                TrieNode child = root.getChildren().get(Character.toString(chr));
+                string += chr;
+                printTrie(child, string);
+            }
+            chr += 1;
+        }
+    }
 
     /**
      * Inserts the string word into the trie.
@@ -58,29 +84,27 @@ public class Trie {
      * @param word
      */
     public void insert(String word) {
-        TrieNode cur = root;
         // Empty 
-        if (cur == null) {
-            root = new TrieNode(""); // init with empty string
-            TrieNode node = new TrieNode(Character.toString(word.charAt(0)));
-            root.addChild(node);
+        if (root == null) {
+            root = new TrieNode(""); // init root to be a node with empty string
+        }
 
-            for (int i = 1; i < word.length(); i++) {
-                node = new TrieNode(Character.toString(word.charAt(i)));
-                node.setParent(cur);
+        TrieNode cur = root;
+        
+        for (int i = 0; i < word.length(); i++) {
+            if (cur.getChildren() == null || 
+                cur.getChildren().get(Character.toString(word.charAt(i))) == null) {
+                TrieNode node = new TrieNode(Character.toString(word.charAt(i))); 
+                cur.addChild(Character.toString(word.charAt(i)), node);
                 cur = node;
+                continue;
             }
 
-            cur = null; // end of the string
-
-            return;
+            // Get the child node containing the current character
+            cur = cur.getChildren().get(Character.toString(word.charAt(i)));
         }
-        
-        
 
-        
-
-        
+        cur.endString = true;
     }
 
     /**
@@ -92,7 +116,35 @@ public class Trie {
      * and false otherwise.
      */
     public boolean search(String word) {
-        return false;
+        if (root == null) {
+            return false;
+        }
+
+        TrieNode cur = root;
+
+        for (int i = 0; i < word.length(); i++) {
+            if (cur == null || cur.getChildren() == null) {
+                return false;
+            }
+            
+            // Get the child node containing the current character
+            TrieNode childContainingChar = cur.getChildren().get(Character.toString(word.charAt(i)));
+            if (childContainingChar == null) {
+                return false;
+            }
+            // If the word has ended, but the word still continues
+            if (i == word.length() - 1 && childContainingChar.endString) {
+                return true;
+            }
+
+            if (i == word.length() - 1 && !childContainingChar.endString) {
+                return false;
+            }
+
+            cur = childContainingChar;
+        }
+
+        return true;
     }
 
     /**
@@ -104,7 +156,39 @@ public class Trie {
      * prefix, and false otherwise.
      */
     public boolean startsWith(String prefix) {
-        return false;
+        if (root == null) {
+            return false;
+        }
+
+        TrieNode cur = root;
+
+        for (int i = 0; i < prefix.length(); i++) {
+            if (cur == null || cur.getChildren() == null) {
+                return false;
+            }
+            // Get the child node containing the current character
+            TrieNode childContainingChar = cur.getChildren().get(Character.toString(prefix.charAt(i)));
+            
+            if (childContainingChar == null) {
+                return false;
+            }
+
+            cur = childContainingChar;
+        }
+
+        return true;
+    }
+
+    public static void main(String[] args) {
+        Trie trie = new Trie();
+        trie.insert("app");
+        trie.insert("apple");
+        trie.insert("beer");
+        trie.insert("add");
+        trie.insert("jam");
+        trie.insert("rental");
+        trie.printTrie(trie.root, "");
+        System.out.println(Arrays.toString(trie.strings.toArray()));
     }
 }
 

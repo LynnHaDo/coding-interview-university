@@ -1,4 +1,5 @@
-class Solution153 {
+package src;
+public class Solution153 {
     public int findMin(int[] nums) {
         if (nums.length == 1) {
             return nums[0];

@@ -1,4 +1,5 @@
-class Solution53 {
+package src;
+public class Solution53 {
 
     // Brute force: Compute every subarray containing each element -> Find the largest
 
