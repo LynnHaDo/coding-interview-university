@@ -18,3 +18,9 @@ Thumbs.db
 
 # Sublime Files
 .sublime
+
+# VSCode running configurations
+.vscode 
+
+# Github
+.github 
