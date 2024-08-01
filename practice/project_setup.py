@@ -10,7 +10,7 @@ parser.add_argument('topic',
                     help='Name of topic to set up a new project')
 parser.add_argument('implementation_setup',
                     metavar="IMPLEMENTATION_REQUIRED",
-                    type=bool,
+                    type=int,
                     help="Whether or not c implementation files should be generated")
 
 args = parser.parse_args() 
@@ -58,11 +58,12 @@ def c_implementation_setup(srcPath):
 
 if __name__ == "__main__":
     if (os.path.exists(args.topic)):
-        print("Folder name already exists within this directory. The setup will generate files in this existing folder...")
+        print("Folder name already exists within this directory. \
+              The setup will generate files in this existing folder...")
+    else:
+        os.makedirs(args.topic)
 
-    os.makedirs(args.topic)
-
-    if (args.implementation_setup):
+    if (args.implementation_setup == 1):
         srcPath = os.path.join(args.topic, 'impl')
         # Set up c files
         c_implementation_setup(srcPath)
