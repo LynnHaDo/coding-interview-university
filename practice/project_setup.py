@@ -15,7 +15,7 @@ parser.add_argument('implementation_setup',
 
 args = parser.parse_args() 
 
-def get_maven_task_command(parentDir):
+def get_maven_task_command():
     """
     Generate command to create a maven project
 
@@ -23,7 +23,7 @@ def get_maven_task_command(parentDir):
     :return: the command as a string
     """
 
-    return f"mvn archetype:generate -DgroupId=leetcode -DartifactId={parentDir} -DarchetypeArtifactId=maven-archetype-quickstart -DarchetypeVersion=1.4 -DinteractiveMode=false"
+    return f"mvn archetype:generate -DgroupId=leetcode -DartifactId=leetcode -DarchetypeArtifactId=maven-archetype-quickstart -DarchetypeVersion=1.4 -DinteractiveMode=false"
 
 
 def java_project_setup(parentDir):
@@ -34,7 +34,7 @@ def java_project_setup(parentDir):
     """
     try: 
         print(f"Generating java project within {args.topic}...\n")
-        subprocess.call(get_maven_task_command(parentDir), shell=True)
+        subprocess.call(get_maven_task_command(), shell=True, cwd=parentDir)
     except OSError as e:
         print(f"An error occured: {e}\n")
         sys.exit(1)
