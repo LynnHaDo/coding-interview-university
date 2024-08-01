@@ -1,4 +1,5 @@
 import os;
+import subprocess;
 import sys;
 import argparse;
 
@@ -22,7 +23,7 @@ def get_maven_task_command(parentDir):
     :return: the command as a string
     """
 
-    return f"mvn archetype:generate -DgroupId=leetcode -DartifactId=leetcode.{parentDir.lower()} -DarchetypeArtifactId=maven-archetype-quickstart -DarchetypeVersion=1.4 -DinteractiveMode=false"
+    return f"mvn archetype:generate -DgroupId=leetcode -DartifactId={parentDir} -DarchetypeArtifactId=maven-archetype-quickstart -DarchetypeVersion=1.4 -DinteractiveMode=false"
 
 
 def java_project_setup(parentDir):
@@ -33,8 +34,7 @@ def java_project_setup(parentDir):
     """
     try: 
         print(f"Generating java project within {args.topic}...\n")
-        os.system("export PATH='$PATH:/Users/linhdo/Documents/Coding/coding-interview-university/lib/apache-maven-3.9.8/bin'")
-        os.system(get_maven_task_command(parentDir))
+        subprocess.call(get_maven_task_command(parentDir), shell=True)
     except OSError as e:
         print(f"An error occured: {e}\n")
         sys.exit(1)
@@ -58,11 +58,12 @@ def c_implementation_setup(srcPath):
 
 if __name__ == "__main__":
     if (os.path.exists(args.topic)):
-        print("Folder name already exists within this directory.")
-        sys.exit(1)
+        print("Folder name already exists within this directory. The setup will generate files in this existing folder...")
+
+    os.makedirs(args.topic)
 
     if (args.implementation_setup):
-        srcPath = os.path.join(args.topic, 'src')
+        srcPath = os.path.join(args.topic, 'impl')
         # Set up c files
         c_implementation_setup(srcPath)
     
