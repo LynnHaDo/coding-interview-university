@@ -1,7 +1,4 @@
-package leetcode.test;
-
-import leetcode.src.Solution572;
-import leetcode.src.TreeNode;
+package leetcode;
 
 import org.junit.Before;
 import org.junit.Test;

@@ -1,4 +1,4 @@
-package leetcode.src;
+package leetcode;
 import java.util.HashSet;
 
 public class Solution3 {

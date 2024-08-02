@@ -1,6 +1,4 @@
-package leetcode.test;
-
-import leetcode.src.Trie;
+package leetcode;
 
 import org.junit.Before;
 import org.junit.Test;

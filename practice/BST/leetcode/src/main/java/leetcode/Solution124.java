@@ -1,4 +1,4 @@
-package leetcode.src;
+package leetcode;
 
 public class Solution124 {
     private int result = Integer.MIN_VALUE;

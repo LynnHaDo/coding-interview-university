@@ -1,11 +1,9 @@
-package test;
+package leetcode;
 
 import java.util.List;
 import java.util.ArrayList;
 
 import org.junit.Test;
-
-import src.Solution39;
 
 import static org.junit.Assert.assertArrayEquals;
 
@@ -15,7 +13,7 @@ public class Solution39Test {
     public void test1() {
         Solution39 solution = new Solution39();
         int[] candidates = {2,3,6,7};
-        List<Integer> list1 = new ArrayList<>() {
+        List<Integer> list1 = new ArrayList<Integer>() {
             {
                 add(2);
                 add(2);
@@ -23,7 +21,7 @@ public class Solution39Test {
             }
         };
 
-        List<Integer> list2 = new ArrayList<>() {
+        List<Integer> list2 = new ArrayList<Integer>() {
             {
                 add(7);
             }

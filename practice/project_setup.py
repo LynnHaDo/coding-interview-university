@@ -3,19 +3,25 @@ import subprocess;
 import sys;
 import argparse;
 
+# TODO: Implement function to update pom.xml version (Reference: https://gist.github.com/CrowdSalat/204a50cc0681ec3531d804e70e285aa3)
+
 parser = argparse.ArgumentParser(prog="project_setup", description="Project folder setup program for practice project.")
-parser.add_argument('topic', 
+parser.add_argument('topic',
                     metavar='FOLDER_NAME', 
                     type=str, 
                     help='Name of topic to set up a new project')
-parser.add_argument('implementation_setup',
-                    metavar="IMPLEMENTATION_REQUIRED",
+parser.add_argument('-impl',
+                    '--implement',
                     type=int,
-                    help="Whether or not c implementation files should be generated")
+                    help="Whether or not c implementation files should be generated (1 for yes, 0 for no)")
+parser.add_argument("-c",
+                    "--compile",
+                    type=int,
+                    help="Whether or not to compile the maven directory (1 for yes, 0 for no)")
 
 args = parser.parse_args() 
 
-def get_maven_task_command():
+def get_maven_task_command(parentDir):
     """
     Generate command to create a maven project
 
@@ -23,21 +29,30 @@ def get_maven_task_command():
     :return: the command as a string
     """
 
-    return f"mvn archetype:generate -DgroupId=leetcode -DartifactId=leetcode -DarchetypeArtifactId=maven-archetype-quickstart -DarchetypeVersion=1.4 -DinteractiveMode=false"
+    return f"mvn archetype:generate -DgroupId=leetcode -DartifactId=leetcode.{parentDir.lower().replace(' ', '')} -DarchetypeArtifactId=maven-archetype-quickstart -DarchetypeVersion=1.4 -DinteractiveMode=false"
 
 
 def java_project_setup(parentDir):
     """
-    Set up java folder (maven)
+    Set up Java folder (maven)
 
     :param parentDir: path to generate the project in
     """
     try: 
         print(f"Generating java project within {args.topic}...\n")
-        subprocess.call(get_maven_task_command(), shell=True, cwd=parentDir)
+        # Run mvn command
+        subprocess.call(get_maven_task_command(parentDir), shell=True, cwd=parentDir)
     except OSError as e:
         print(f"An error occured: {e}\n")
         sys.exit(1)
+
+def java_project_compile(dir):
+    """
+    Compile maven project 
+
+    :param dir: directory of the maven project
+    """
+    subprocess.call("mvn compile", shell=True, cwd=dir)
 
 def c_implementation_setup(srcPath):
     """
@@ -58,18 +73,31 @@ def c_implementation_setup(srcPath):
 
 if __name__ == "__main__":
     if (os.path.exists(args.topic)):
-        print("Folder name already exists within this directory. \
-              The setup will generate files in this existing folder...")
+        print("Folder name already exists within this directory.\nThe setup will generate files in this existing folder...")
     else:
         os.makedirs(args.topic)
+    
+    # Set up PATH environment variable
+    os.environ['MAVEN'] = "/Users/linhdo/Documents/Coding/coding-interview-university/lib/apache-maven-3.9.8/bin"
+    os.environ['PATH'] = f"{os.environ['MAVEN']}:{os.environ['PATH']}"
 
-    if (args.implementation_setup == 1):
+    if (args.implement == 1):
         srcPath = os.path.join(args.topic, 'impl')
         # Set up c files
         c_implementation_setup(srcPath)
     
-    # Set up java files
+    if (args.compile == 1):
+        if (not os.path.exists(f"{args.topic}/leetcode.{args.topic.lower().replace(' ', '')}")):
+            print("Leetcode Java project does not exist.")
+            # Set up java files
+            java_project_setup(args.topic)
+        
+        java_project_compile(f"{args.topic}/leetcode.{args.topic.lower().replace(' ', '')}")
+        sys.exit(1)
+    
     java_project_setup(args.topic)
+    
+    
 
 
 

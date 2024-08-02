@@ -1,6 +1,4 @@
-package test;
-
-import src.Solution213;
+package leetcode;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -19,7 +17,9 @@ public class Solution213Test {
         // nums = [2,3,2]
         // output = 3
         int[] nums = {2, 3, 2};
-        // maxAmt = {0, 2, 3, 4}
+        // 0 3 3 
+        // 0 2 2
+        // maxAmt = {0, 2, 3, 3}
         assertEquals(3, solution.rob(nums));
     }
 

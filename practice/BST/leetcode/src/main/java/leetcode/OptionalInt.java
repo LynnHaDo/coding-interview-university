@@ -1,4 +1,4 @@
-package leetcode.src;
+package leetcode;
 
 public class OptionalInt {
     int value;

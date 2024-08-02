@@ -1,4 +1,4 @@
-package leetcode.src;
+package leetcode;
 
 public class Solution450 {
     public TreeNode deleteNode(TreeNode root, int key) {

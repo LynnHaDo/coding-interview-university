@@ -1,7 +1,4 @@
-package leetcode.test;
-
-import leetcode.src.Solution105;
-import leetcode.src.TreeNode;
+package leetcode;
 
 import static org.junit.Assert.assertArrayEquals;
 

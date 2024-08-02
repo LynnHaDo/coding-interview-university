@@ -1,10 +1,7 @@
-package leetcode.test;
+package leetcode;
 
 import java.util.List;
 import java.util.ArrayList;
-
-import leetcode.src.Solution102;
-import leetcode.src.TreeNode;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -27,27 +24,25 @@ public class Solution102Test {
         root.getRight().setLeft(new TreeNode(15));
         root.getRight().setRight(new TreeNode(7));        
 
-        List<Integer> levelOne = new ArrayList<>() {{
+        List<Integer> levelOne = new ArrayList<Integer>() {{
             add(3);
         }};
 
-        List<Integer> levelTwo = new ArrayList<>() {{
+        List<Integer> levelTwo = new ArrayList<Integer>() {{
             add(9);
             add(20);
         }};
 
-        List<Integer> levelThree = new ArrayList<>() {{
+        List<Integer> levelThree = new ArrayList<Integer>() {{
             add(15);
             add(7);
         }};
 
-        List<List<Integer>> expected = new ArrayList<>() {
-            {
-                add(levelOne);
-                add(levelTwo);
-                add(levelThree);
-            }
-        };
+        List<List<Integer>> expected = new ArrayList<List<Integer>>() {};
+
+        expected.add(levelOne);
+        expected.add(levelTwo);
+        expected.add(levelThree);
 
         assertArrayEquals(expected.toArray(), solution.levelOrder(root).toArray());
     }
@@ -58,17 +53,14 @@ public class Solution102Test {
         // Expected: [[1]]
         TreeNode root = new TreeNode(1);
 
-        List<Integer> levelOne = new ArrayList<>() {
+        List<Integer> levelOne = new ArrayList<Integer>() {
             {
                 add(1);
             }
         };
 
-        List<List<Integer>> expected = new ArrayList<>() {
-            {
-                add(levelOne);
-            }
-        };
+        List<List<Integer>> expected = new ArrayList<List<Integer>>();
+        expected.add(levelOne);
 
         assertArrayEquals(solution.levelOrder(root).toArray(), expected.toArray());
     }
@@ -78,11 +70,7 @@ public class Solution102Test {
         // root = []
         // Expected: []
 
-        List<List<Integer>> expected = new ArrayList<>() {
-            {
-                add(new ArrayList<Integer>());
-            }
-        };
+        List<List<Integer>> expected = new ArrayList<List<Integer>>();
 
         //assertArrayEquals(expected.toArray(), solution.levelOrder(null).toArray());
     }
@@ -95,27 +83,24 @@ public class Solution102Test {
         root.getLeft().setLeft(new TreeNode(4));
         root.getRight().setRight(new TreeNode(5));        
 
-        List<Integer> levelOne = new ArrayList<>() {{
+        List<Integer> levelOne = new ArrayList<Integer>() {{
             add(1);
         }};
 
-        List<Integer> levelTwo = new ArrayList<>() {{
+        List<Integer> levelTwo = new ArrayList<Integer>() {{
             add(2);
             add(3);
         }};
 
-        List<Integer> levelThree = new ArrayList<>() {{
+        List<Integer> levelThree = new ArrayList<Integer>() {{
             add(4);
             add(5);
         }};
 
-        List<List<Integer>> expected = new ArrayList<>() {
-            {
-                add(levelOne);
-                add(levelTwo);
-                add(levelThree);
-            }
-        };
+        List<List<Integer>> expected = new ArrayList<List<Integer>>();
+        expected.add(levelOne);
+        expected.add(levelTwo);
+        expected.add(levelThree);
 
         assertArrayEquals(expected.toArray(), solution.levelOrder(root).toArray());
     }

@@ -1,8 +1,6 @@
-package test;
+package leetcode;
 
 import org.junit.Test;
-
-import src.Solution198;
 
 import static org.junit.Assert.assertEquals;
 

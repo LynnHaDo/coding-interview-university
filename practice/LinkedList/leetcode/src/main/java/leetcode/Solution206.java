@@ -1,4 +1,4 @@
-package src.leetcode;
+package leetcode;
 
 public class Solution206 {
     public ListNode reverseList(ListNode head) {

@@ -1,4 +1,4 @@
-package leetcode.src;
+package leetcode;
 
 import java.util.List;
 
@@ -30,17 +30,13 @@ public class Solution102 {
         q.offer(root);
 
         // Add the first level
-        levelOrder.add(new ArrayList<Integer>() {
-            {
-                add(root.val);
-            }
-        });
-
-        levelOrderTree.add(new ArrayList<TreeNode>() {
-            {
-                add(root);
-            }
-        });
+        List<Integer> temp = new ArrayList<Integer>();
+        temp.add(root.val);   
+        levelOrder.add(temp);
+        
+        List<TreeNode> tempTree = new ArrayList<TreeNode>();
+        tempTree.add(root);
+        levelOrderTree.add(tempTree);
         
         while (!q.isEmpty()) {
             TreeNode node = q.poll();
@@ -80,38 +76,5 @@ public class Solution102 {
         }
 
         return levelOrder;
-    }
-
-    public static void main(String[] args) {
-        Solution102 solution = new Solution102();
-
-        TreeNode root = new TreeNode(1, new TreeNode(2), new TreeNode(3));
-        root.getLeft().setLeft(new TreeNode(4));
-        root.getRight().setRight(new TreeNode(5));        
-
-        List<Integer> levelOne = new ArrayList<>() {{
-            add(1);
-        }};
-
-        List<Integer> levelTwo = new ArrayList<>() {{
-            add(2);
-            add(3);
-        }};
-
-        List<Integer> levelThree = new ArrayList<>() {{
-            add(4);
-            add(5);
-        }};
-
-        List<List<Integer>> expected = new ArrayList<>() {
-            {
-                add(levelOne);
-                add(levelTwo);
-                add(levelThree);
-            }
-        };
-
-        System.out.println(Arrays.toString(solution.levelOrder(root).toArray()));
-        System.out.println(Arrays.toString(expected.toArray()));
     }
 }

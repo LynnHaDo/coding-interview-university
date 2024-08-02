@@ -1,4 +1,4 @@
-package leetcode.src;
+package leetcode;
 
 public class Solution572 {
     private boolean isSame(TreeNode root, TreeNode subRoot) {

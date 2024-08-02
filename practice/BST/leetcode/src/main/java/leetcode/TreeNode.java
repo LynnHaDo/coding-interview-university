@@ -1,4 +1,4 @@
-package leetcode.src;
+package leetcode;
 
 /**
  * Represents a node in the binary tree

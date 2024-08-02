@@ -1,4 +1,4 @@
-package leetcode.src;
+package leetcode;
 
 public class Solution235 {
     private TreeNode findParent(TreeNode root, TreeNode node, TreeNode parent) {
