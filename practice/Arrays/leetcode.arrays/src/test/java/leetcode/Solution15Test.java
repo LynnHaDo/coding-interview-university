@@ -1,11 +1,14 @@
 package leetcode;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
+
+import static org.hamcrest.Matchers.containsInAnyOrder;
 
 public class Solution15Test {
     Solution15 solution;
@@ -30,6 +33,7 @@ public class Solution15Test {
          */
 
         int[] nums = {-1,0,1,2,-1,-4};
+        // -4 -1 -1 0 1 2 
         List<Integer> triplet1 = new ArrayList<Integer>(){{
             add(-1);
             add(-1);
@@ -48,6 +52,10 @@ public class Solution15Test {
 
         assertEquals(2, solution.threeSum(nums).size());
         
+        for (int i = 0; i < expected.size(); i++) {
+
+        }
+        
     }
 
     @Test
@@ -57,6 +65,9 @@ public class Solution15Test {
          * Output: []
          * Explanation: The only possible triplet does not sum up to 0.
          */
+        int[] nums = {0, 1, 1};
+
+        assertEquals(0, solution.threeSum(nums).size());
     }
 
     @Test
@@ -66,5 +77,40 @@ public class Solution15Test {
          * Output: [[0,0,0]]
          * Explanation: The only possible triplet sums up to 0.
          */
+        int[] nums = {0, 0, 0};
+        List<List<Integer>> res = solution.threeSum(nums);
+        assertEquals(1, res.size());
+        
+        List<Integer> numsList = new ArrayList<Integer>() {
+            {
+                add(0);
+                add(0);
+                add(0);
+            }
+        };
+
+        assertArrayEquals(numsList.toArray(), res.get(0).toArray());
+    }
+
+    @Test
+    public void test4() {
+        /**
+         * Input: nums = [0,0,0]
+         * Output: [[0,0,0]]
+         * Explanation: The only possible triplet sums up to 0.
+         */
+        int[] nums = {0, 0, 0, 0};
+        List<List<Integer>> res = solution.threeSum(nums);
+        assertEquals(1, res.size());
+        
+        List<Integer> numsList = new ArrayList<Integer>() {
+            {
+                add(0);
+                add(0);
+                add(0);
+            }
+        };
+
+        assertArrayEquals(numsList.toArray(), res.get(0).toArray());
     }
 }
