@@ -22,7 +22,7 @@ public class Solution55Test {
     @Test 
     public void test2() {
         int[] nums = {3,2,1,0,4};
-        assertTrue(solution.canJump(nums));
+        assertFalse(solution.canJump(nums));
     }
 
 }
